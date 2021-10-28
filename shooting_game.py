@@ -16,10 +16,11 @@ if not pygame.font:
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 
+### 이동 키 정의 |2|씩 움직임 ###
 direction = {None: (0, 0), pygame.K_w: (0, -2), pygame.K_s: (0, 2),
              pygame.K_a: (-2, 0), pygame.K_d: (2, 0)}
 
-
+###키 정의 https://runebook.dev/ko/docs/pygame/ref/key 참고 ####
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -124,7 +125,8 @@ def main():
 
     title, titleRect = load_image('title.png')
     titleRect.midtop = screen.get_rect().inflate(0, -200).midtop
-
+    
+    ###### 메뉴명 ######
     startText = font.render('START GAME', 1, BLUE)
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 100).midbottom)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
@@ -145,6 +147,7 @@ def main():
     quitPos = quitText.get_rect(topleft=musicPos.bottomleft)
     selectText = font.render('*', 1, BLUE)
     selectPos = selectText.get_rect(topright=startPos.topleft)
+    ##### 메뉴 : 딕셔너리로 저장되어있음 #####
     menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos}
     selection = 1
     showHiScores = False
@@ -153,6 +156,7 @@ def main():
     if music and pygame.mixer:
         pygame.mixer.music.play(loops=-1)
 
+    ########### 메뉴 화면 구성 while문 #############    
     while inMenu:
         clock.tick(clockTime)
 
@@ -163,6 +167,7 @@ def main():
         if backgroundLoc - speed <= speed:
             backgroundLoc = 1500
 
+        ######## 이벤트 구현 ######### 
         for event in pygame.event.get():
             if (event.type == pygame.QUIT):
                 return
@@ -170,24 +175,24 @@ def main():
                   and event.key == pygame.K_RETURN):
                 if showHiScores:
                     showHiScores = False
-                elif selection == 1:
+                elif selection == 1: ###START_GAME
                     inMenu = False
                     ship.initializeKeys()
-                elif selection == 2:
+                elif selection == 2: ###HIGH_SCORES
                     showHiScores = True
-                elif selection == 3:
+                elif selection == 3: ###SOUND FX(효과음)
                     soundFX = not soundFX
                     if soundFX:
                         missile_sound.play()
                     Database.setSound(int(soundFX))
-                elif selection == 4 and pygame.mixer:
+                elif selection == 4 and pygame.mixer: ###MUSIC(배경음악)
                     music = not music
                     if music:
                         pygame.mixer.music.play(loops=-1)
                     else:
                         pygame.mixer.music.stop()
                     Database.setSound(int(music), music=True)
-                elif selection == 5:
+                elif selection == 5: ###QUIT
                     return
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
@@ -202,6 +207,7 @@ def main():
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
 
+        ####HISCORES 화면####
         if showHiScores:
             textOverlays = zip(highScoreTexts, highScorePos)
         else:
@@ -218,6 +224,7 @@ def main():
             screen.blit(txt, pos)
         pygame.display.flip()
 
+    #################메인 게임####################
     while ship.alive:
         clock.tick(clockTime)
 
@@ -233,22 +240,22 @@ def main():
                 or event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
                 return
-            elif (event.type == pygame.KEYDOWN
-                  and event.key in direction.keys()):
-                ship.horiz += direction[event.key][0] * speed
+            elif (event.type == pygame.KEYDOWN 
+                  and event.key in direction.keys()): ##방향 조절 키 눌렸을 때 
+                ship.horiz += direction[event.key][0] * speed ##speed : 1.5로 초기화 됨
                 ship.vert += direction[event.key][1] * speed
             elif (event.type == pygame.KEYUP
-                  and event.key in direction.keys()):
+                  and event.key in direction.keys()): ##방향 조절 키 뗐을 때
                 ship.horiz -= direction[event.key][0] * speed
                 ship.vert -= direction[event.key][1] * speed
             elif (event.type == pygame.KEYDOWN
-                  and event.key == pygame.K_SPACE):
+                  and event.key == pygame.K_SPACE): ##spacebar가 눌렸을 때
                 Missile.position(ship.rect.midtop)
                 missilesFired += 1
                 if soundFX:
                     missile_sound.play()
             elif (event.type == pygame.KEYDOWN
-                  and event.key == pygame.K_b):
+                  and event.key == pygame.K_b): #b 눌렀을 때(폭탄)
                 if bombsHeld > 0:
                     bombsHeld -= 1
                     newBomb = ship.bomb()
@@ -312,7 +319,7 @@ def main():
         elif curTime > 0:
             curTime -= 1
 
-    # Update text overlays
+    ##### 게임 내 텍스트 : Update text overlays ####
         waveText = font.render("Wave: " + str(wave), 1, BLUE)
         leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),
                                1, BLUE)
@@ -357,6 +364,7 @@ def main():
                 else:
                     aliensThisWave *= 2
                     aliensLeftThisWave = Alien.numOffScreen = aliensThisWave
+
                 if wave == 1:
                     Alien.pool.add([Fasty() for _ in range(5)])
                 if wave == 2:
@@ -417,6 +425,8 @@ def main():
                 Database.setScore(hiScores, (name, score, accuracy))
                 return True
 
+
+        ##### 게임 오버시 1.highscore일때 2.highscore가 아닐때 화면 ####
         if isHiScore:
             hiScoreText = font.render('HIGH SCORE!', 1, RED)
             hiScorePos = hiScoreText.get_rect(
@@ -440,7 +450,7 @@ def main():
             textOverlay = zip([gameOverText, scoreText],
                               [gameOverPos, scorePos])
 
-    # Update and draw all sprites
+    ###### 화면에 나타내기 : Update and draw all sprites
         screen.blit(
             background, (0, 0), area=pygame.Rect(
                 0, backgroundLoc, 500, 500))

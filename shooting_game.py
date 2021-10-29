@@ -16,9 +16,9 @@ if not pygame.font:
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 
+############### 이동 정의 |2|씩 이동 ##########################
 direction = {None: (0, 0), pygame.K_w: (0, -2), pygame.K_s: (0, 2),
              pygame.K_a: (-2, 0), pygame.K_d: (2, 0)}
-
 
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
@@ -62,7 +62,7 @@ def main():
     screen.blit(background, (0, 0))
     pygame.display.flip()
 
-# Prepare game objects
+#################### Prepare game objects ###########################
     speed = 1.5
     MasterSprite.speed = speed
     alienPeriod = 60 / speed
@@ -146,8 +146,6 @@ def main():
     languagePos = languageText.get_rect(topleft=quitPos.bottomleft)  ###############################
     menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos, 6:languagePos}    ####################
 
-
-
     selection = 1
     showHiScores = False
     soundFX = Database.getSound()
@@ -155,6 +153,7 @@ def main():
     if music and pygame.mixer:
         pygame.mixer.music.play(loops=-1)
 
+    ################################# 메뉴 화면 #########################################
     while inMenu:
         clock.tick(clockTime)
 
@@ -232,6 +231,8 @@ def main():
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
         
+
+        ###################### 점수 화면 ######################
         if language_check == False:                 #################################################
             highScoreTexts = [font.render("NAME", 1, RED),
                             font.render("SCORE", 1, RED),
@@ -263,7 +264,7 @@ def main():
         pygame.display.flip()
 
 
-
+    ######################### 메인 게임 #####################################
     while ship.alive:
         clock.tick(clockTime)
 
@@ -378,7 +379,7 @@ def main():
         text = [waveText, leftText, scoreText, bombText]
         textposition = [wavePos, leftPos, scorePos, bombPos]
 
-    # Detertmine when to move to next wave
+    ###################### 다음 wave : Detertmine when to move to next wave ########################
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1
@@ -443,6 +444,7 @@ def main():
     name = ''
     nameBuffer = []
 
+    ############################# Game Over #################################
     while True:
         clock.tick(clockTime)
 
@@ -508,7 +510,7 @@ def main():
             textOverlay = zip([gameOverText, scoreText],
                               [gameOverPos, scorePos])
 
-    # Update and draw all sprites
+    ############################### Update and draw all sprites ############################################
         screen.blit(
             background, (0, 0), area=pygame.Rect(
                 0, backgroundLoc, 500, 500))

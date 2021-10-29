@@ -16,11 +16,10 @@ if not pygame.font:
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 
-### 이동 키 정의 |2|씩 움직임 ###
 direction = {None: (0, 0), pygame.K_w: (0, -2), pygame.K_s: (0, 2),
              pygame.K_a: (-2, 0), pygame.K_d: (2, 0)}
 
-###키 정의 https://runebook.dev/ko/docs/pygame/ref/key 참고 ####
+
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -38,6 +37,7 @@ def main():
     screen = pygame.display.set_mode((500, 500))
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
+    language_check=False                                ######### False면 영어, True면 한국어
 
 # Create the background which will scroll and loop over a set of different
 # size stars
@@ -104,51 +104,50 @@ def main():
     powerupTimeLeft = powerupTime
     betweenWaveTime = 3 * clockTime
     betweenWaveCount = betweenWaveTime
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.SysFont('malgungothic', 22)                          ################################
 
     inMenu = True
     hiScores = Database.getScores()
     highScoreTexts = [font.render("NAME", 1, RED),
-                      font.render("SCORE", 1, RED),
-                      font.render("ACCURACY", 1, RED)]
+                    font.render("SCORE", 1, RED),
+                    font.render("ACCURACY", 1, RED)]
     highScorePos = [highScoreTexts[0].get_rect(
                       topleft=screen.get_rect().inflate(-100, -100).topleft),
                     highScoreTexts[1].get_rect(
                       midtop=screen.get_rect().inflate(-100, -100).midtop),
                     highScoreTexts[2].get_rect(
                       topright=screen.get_rect().inflate(-100, -100).topright)]
-    for hs in hiScores:
-        highScoreTexts.extend([font.render(str(hs[x]), 1, BLUE)
-                               for x in range(3)])
-        highScorePos.extend([highScoreTexts[x].get_rect(
-            topleft=highScorePos[x].bottomleft) for x in range(-3, 0)])
 
     title, titleRect = load_image('title.png')
     titleRect.midtop = screen.get_rect().inflate(0, -200).midtop
-    
-    ###### 메뉴명 ######
+
     startText = font.render('START GAME', 1, BLUE)
-    startPos = startText.get_rect(midtop=titleRect.inflate(0, 100).midbottom)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
-    hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
     fxText = font.render('SOUND FX ', 1, BLUE)
-    fxPos = fxText.get_rect(topleft=hiScorePos.bottomleft)
     fxOnText = font.render('ON', 1, RED)
     fxOffText = font.render('OFF', 1, RED)
-    fxOnPos = fxOnText.get_rect(topleft=fxPos.topright)
-    fxOffPos = fxOffText.get_rect(topleft=fxPos.topright)
     musicText = font.render('MUSIC', 1, BLUE)
-    musicPos = fxText.get_rect(topleft=fxPos.bottomleft)
     musicOnText = font.render('ON', 1, RED)
     musicOffText = font.render('OFF', 1, RED)
+    quitText = font.render('QUIT', 1, BLUE)
+    selectText = font.render('*', 1, BLUE)
+    languageText = font.render('언어변경', 1, BLUE)                             ###########################
+
+    startPos = startText.get_rect(midtop=titleRect.inflate(0, 100).midbottom)
+    hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
+    fxPos = fxText.get_rect(topleft=hiScorePos.bottomleft)
+    fxOnPos = fxOnText.get_rect(topleft=fxPos.topright)
+    fxOffPos = fxOffText.get_rect(topleft=fxPos.topright)
+    musicPos = fxText.get_rect(topleft=fxPos.bottomleft)
     musicOnPos = musicOnText.get_rect(topleft=musicPos.topright)
     musicOffPos = musicOffText.get_rect(topleft=musicPos.topright)
-    quitText = font.render('QUIT', 1, BLUE)
     quitPos = quitText.get_rect(topleft=musicPos.bottomleft)
-    selectText = font.render('*', 1, BLUE)
     selectPos = selectText.get_rect(topright=startPos.topleft)
-    ##### 메뉴 : 딕셔너리로 저장되어있음 #####
-    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos}
+    languagePos = languageText.get_rect(topleft=quitPos.bottomleft)  ###############################
+    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos, 6:languagePos}    ####################
+
+
+
     selection = 1
     showHiScores = False
     soundFX = Database.getSound()
@@ -156,7 +155,6 @@ def main():
     if music and pygame.mixer:
         pygame.mixer.music.play(loops=-1)
 
-    ########### 메뉴 화면 구성 while문 #############    
     while inMenu:
         clock.tick(clockTime)
 
@@ -167,7 +165,6 @@ def main():
         if backgroundLoc - speed <= speed:
             backgroundLoc = 1500
 
-        ######## 이벤트 구현 ######### 
         for event in pygame.event.get():
             if (event.type == pygame.QUIT):
                 return
@@ -175,25 +172,28 @@ def main():
                   and event.key == pygame.K_RETURN):
                 if showHiScores:
                     showHiScores = False
-                elif selection == 1: ###START_GAME
+                elif selection == 1:
                     inMenu = False
                     ship.initializeKeys()
-                elif selection == 2: ###HIGH_SCORES
+                elif selection == 2:
                     showHiScores = True
-                elif selection == 3: ###SOUND FX(효과음)
+                elif selection == 3:
                     soundFX = not soundFX
                     if soundFX:
                         missile_sound.play()
                     Database.setSound(int(soundFX))
-                elif selection == 4 and pygame.mixer: ###MUSIC(배경음악)
+                elif selection == 4 and pygame.mixer:
                     music = not music
                     if music:
                         pygame.mixer.music.play(loops=-1)
                     else:
                         pygame.mixer.music.stop()
                     Database.setSound(int(music), music=True)
-                elif selection == 5: ###QUIT
+                elif selection == 5:
                     return
+                elif selection == 6:                                     #################################
+                    language_check = not language_check
+
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
                   and selection > 1
@@ -207,16 +207,54 @@ def main():
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
 
-        ####HISCORES 화면####
+        if language_check == False:  #################################################
+            startText = font.render('START GAME', 1, BLUE)
+            hiScoreText = font.render('HIGH SCORES', 1, BLUE)
+            fxText = font.render('SOUND FX ', 1, BLUE)
+            fxOnText = font.render('ON', 1, RED)
+            fxOffText = font.render('OFF', 1, RED)
+            musicText = font.render('MUSIC', 1, BLUE)
+            musicOnText = font.render('ON', 1, RED)
+            musicOffText = font.render('OFF', 1, RED)
+            quitText = font.render('QUIT', 1, BLUE)
+            selectText = font.render('*', 1, BLUE)
+            languageText = font.render('언어변경', 1, BLUE)
+        else:
+            startText = font.render('게임 시작', 1, BLUE)
+            hiScoreText = font.render('최고 기록', 1, BLUE)
+            fxText = font.render('효과음', 1, BLUE)
+            fxOnText = font.render('켜기', 1, RED)
+            fxOffText = font.render('끄기', 1, RED)
+            musicText = font.render('음악', 1, BLUE)
+            musicOnText = font.render('켜기', 1, RED)
+            musicOffText = font.render('끄기', 1, RED)
+            quitText = font.render('종료', 1, BLUE)
+            selectText = font.render('*', 1, BLUE)
+            languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
+        
+        if language_check == False:                 #################################################
+            highScoreTexts = [font.render("NAME", 1, RED),
+                            font.render("SCORE", 1, RED),
+                            font.render("ACCURACY", 1, RED)]
+        else:
+            highScoreTexts = [font.render("이름", 1, RED),
+                              font.render("점수", 1, RED),
+                              font.render("정확도", 1, RED)]
+        for hs in hiScores:                         ###########원래 while inMenu밖에 있었는데 안으로 가져옴
+            highScoreTexts.extend([font.render(str(hs[x]), 1, BLUE)
+                                   for x in range(3)])
+            highScorePos.extend([highScoreTexts[x].get_rect(
+                topleft=highScorePos[x].bottomleft) for x in range(-3, 0)])
+            
         if showHiScores:
             textOverlays = zip(highScoreTexts, highScorePos)
         else:
             textOverlays = zip([startText, hiScoreText, fxText,
-                                musicText, quitText, selectText,
+                                musicText, quitText, selectText, languageText,        ###########
                                 fxOnText if soundFX else fxOffText,
                                 musicOnText if music else musicOffText],
                                [startPos, hiScorePos, fxPos,
-                                musicPos, quitPos, selectPos,
+                                musicPos, quitPos, selectPos, languagePos,            ###########
                                 fxOnPos if soundFX else fxOffPos,
                                 musicOnPos if music else musicOffPos])
             screen.blit(title, titleRect)
@@ -224,7 +262,8 @@ def main():
             screen.blit(txt, pos)
         pygame.display.flip()
 
-    #################메인 게임####################
+
+
     while ship.alive:
         clock.tick(clockTime)
 
@@ -240,22 +279,22 @@ def main():
                 or event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
                 return
-            elif (event.type == pygame.KEYDOWN 
-                  and event.key in direction.keys()): ##방향 조절 키 눌렸을 때 
-                ship.horiz += direction[event.key][0] * speed ##speed : 1.5로 초기화 됨
+            elif (event.type == pygame.KEYDOWN
+                  and event.key in direction.keys()):
+                ship.horiz += direction[event.key][0] * speed
                 ship.vert += direction[event.key][1] * speed
             elif (event.type == pygame.KEYUP
-                  and event.key in direction.keys()): ##방향 조절 키 뗐을 때
+                  and event.key in direction.keys()):
                 ship.horiz -= direction[event.key][0] * speed
                 ship.vert -= direction[event.key][1] * speed
             elif (event.type == pygame.KEYDOWN
-                  and event.key == pygame.K_SPACE): ##spacebar가 눌렸을 때
+                  and event.key == pygame.K_SPACE):
                 Missile.position(ship.rect.midtop)
                 missilesFired += 1
                 if soundFX:
                     missile_sound.play()
             elif (event.type == pygame.KEYDOWN
-                  and event.key == pygame.K_b): #b 눌렀을 때(폭탄)
+                  and event.key == pygame.K_b):
                 if bombsHeld > 0:
                     bombsHeld -= 1
                     newBomb = ship.bomb()
@@ -319,12 +358,17 @@ def main():
         elif curTime > 0:
             curTime -= 1
 
-    ##### 게임 내 텍스트 : Update text overlays ####
-        waveText = font.render("Wave: " + str(wave), 1, BLUE)
-        leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),
-                               1, BLUE)
-        scoreText = font.render("Score: " + str(score), 1, BLUE)
-        bombText = font.render("Bombs: " + str(bombsHeld), 1, BLUE)
+    # Update text overlays
+        if language_check == False:                                           ###############################
+            waveText = font.render("Wave: " + str(wave), 1, BLUE)
+            leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),1, BLUE)
+            scoreText = font.render("Score: " + str(score), 1, BLUE)
+            bombText = font.render("Bombs: " + str(bombsHeld), 1, BLUE)
+        else: 
+            waveText = font.render("웨이브: " + str(wave), 1, BLUE)
+            leftText = font.render("남은 적: " + str(aliensLeftThisWave), 1, BLUE)
+            scoreText = font.render("점수: " + str(score), 1, BLUE)
+            bombText = font.render("폭탄: " + str(bombsHeld), 1, BLUE)
 
         wavePos = waveText.get_rect(topleft=screen.get_rect().topleft)
         leftPos = leftText.get_rect(midtop=screen.get_rect().midtop)
@@ -338,8 +382,10 @@ def main():
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1
-                nextWaveText = font.render(
-                    'Wave ' + str(wave + 1) + ' in', 1, BLUE)
+                if language_check == False:                                                  ################
+                    nextWaveText = font.render('Wave ' + str(wave + 1) + ' in', 1, BLUE)
+                else:
+                    nextWaveText = font.render('웨이브 ' + str(wave + 1) + ' 단계', 1, BLUE)
                 nextWaveNum = font.render(
                     str((betweenWaveCount // clockTime) + 1), 1, BLUE)
                 text.extend([nextWaveText, nextWaveNum])
@@ -349,7 +395,10 @@ def main():
                     midtop=nextWavePos.midbottom)
                 textposition.extend([nextWavePos, nextWaveNumPos])
                 if wave % 4 == 0:
-                    speedUpText = font.render('SPEED UP!', 1, RED)
+                    if language_check == False:                                         #####################
+                        speedUpText = font.render('SPEED UP!', 1, RED)
+                    else:
+                        speedUpText = font.render('속도 증가!', 1, RED)
                     speedUpPos = speedUpText.get_rect(
                         midtop=nextWaveNumPos.midbottom)
                     text.append(speedUpText)
@@ -364,7 +413,6 @@ def main():
                 else:
                     aliensThisWave *= 2
                     aliensLeftThisWave = Alien.numOffScreen = aliensThisWave
-
                 if wave == 1:
                     Alien.pool.add([Fasty() for _ in range(5)])
                 if wave == 2:
@@ -425,15 +473,19 @@ def main():
                 Database.setScore(hiScores, (name, score, accuracy))
                 return True
 
-
-        ##### 게임 오버시 1.highscore일때 2.highscore가 아닐때 화면 ####
         if isHiScore:
-            hiScoreText = font.render('HIGH SCORE!', 1, RED)
+            if language_check == False:                                     #################################
+                hiScoreText = font.render('HIGH SCORE!', 1, RED)
+            else:
+                hiScoreText = font.render('최고 기록!', 1, RED)
             hiScorePos = hiScoreText.get_rect(
                 midbottom=screen.get_rect().center)
             scoreText = font.render(str(score), 1, BLUE)
             scorePos = scoreText.get_rect(midtop=hiScorePos.midbottom)
-            enterNameText = font.render('ENTER YOUR NAME:', 1, RED)
+            if language_check == False:                                         #################################
+                enterNameText = font.render('ENTER YOUR NAME:', 1, RED)
+            else:
+                enterNameText = font.render('아이디를 적으세요:', 1, RED)
             enterNamePos = enterNameText.get_rect(midtop=scorePos.midbottom)
             nameText = font.render(name, 1, BLUE)
             namePos = nameText.get_rect(midtop=enterNamePos.midbottom)
@@ -442,15 +494,21 @@ def main():
                               [hiScorePos, scorePos,
                                enterNamePos, namePos])
         else:
-            gameOverText = font.render('GAME OVER', 1, BLUE)
+            if language_check == False:                                     #################################
+                gameOverText = font.render('GAME OVER', 1, BLUE)
+            else:
+                gameOverText = font.render('게임 오버', 1, BLUE)
             gameOverPos = gameOverText.get_rect(
                 center=screen.get_rect().center)
-            scoreText = font.render('SCORE: {}'.format(score), 1, BLUE)
+            if language_check == False:                                     #################################
+                scoreText = font.render('SCORE: {}'.format(score), 1, BLUE)
+            else:
+                scoreText = font.render('점수: {}'.format(score), 1, BLUE)
             scorePos = scoreText.get_rect(midtop=gameOverPos.midbottom)
             textOverlay = zip([gameOverText, scoreText],
                               [gameOverPos, scorePos])
 
-    ###### 화면에 나타내기 : Update and draw all sprites
+    # Update and draw all sprites
         screen.blit(
             background, (0, 0), area=pygame.Rect(
                 0, backgroundLoc, 500, 500))

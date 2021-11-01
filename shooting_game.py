@@ -115,7 +115,7 @@ def main():
     powerupTimeLeft = powerupTime
     betweenWaveTime = 3 * clockTime
     betweenWaveCount = betweenWaveTime
-    font = pygame.font.SysFont("notosanscjkkr",20)                          ################################
+    font = pygame.font.SysFont("notosanscjkkr",20)                          #####한글오류해결#########################
 
     inMenu = True
     hiScores = Database.getScores()

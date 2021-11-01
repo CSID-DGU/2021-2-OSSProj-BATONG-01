@@ -14,11 +14,19 @@ if not pygame.font:
     print('Warning, fonts disabled')
 
 BLUE = (0, 0, 255)
-RED = (255, 0, 0)
+RED = (255, 0, 0)                               
 
 ############### 이동 정의 |2|씩 이동 ##########################
 direction = {None: (0, 0), pygame.K_w: (0, -2), pygame.K_s: (0, 2),
              pygame.K_a: (-2, 0), pygame.K_d: (2, 0)}
+
+# class Language_check() :
+#     def __init__(self):
+#         self.state = False ######### False면 영어, True면 한국어
+#     def change_language(self) :
+#         self.state = not self.state
+#     def get_language(self) :
+#         return self.state
 
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
@@ -37,7 +45,7 @@ def main():
     screen = pygame.display.set_mode((500, 500))
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
-    language_check=False                                ######### False면 영어, True면 한국어
+    language_check = False
 
 # Create the background which will scroll and loop over a set of different
 # size stars
@@ -192,7 +200,6 @@ def main():
                     return
                 elif selection == 6:                                     #################################
                     language_check = not language_check
-
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
                   and selection > 1
@@ -206,7 +213,7 @@ def main():
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
 
-        if language_check == False:  #################################################
+        if not language_check :  #################################################
             startText = font.render('START GAME', 1, BLUE)
             hiScoreText = font.render('HIGH SCORES', 1, BLUE)
             fxText = font.render('SOUND FX ', 1, BLUE)
@@ -233,7 +240,7 @@ def main():
         
 
         ###################### 점수 화면 ######################
-        if language_check == False:                 #################################################
+        if not language_check :                 #################################################
             highScoreTexts = [font.render("NAME", 1, RED),
                             font.render("SCORE", 1, RED),
                             font.render("ACCURACY", 1, RED)]
@@ -360,7 +367,7 @@ def main():
             curTime -= 1
 
     # Update text overlays
-        if language_check == False:                                           ###############################
+        if not language_check :                                           ###############################
             waveText = font.render("Wave: " + str(wave), 1, BLUE)
             leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),1, BLUE)
             scoreText = font.render("Score: " + str(score), 1, BLUE)
@@ -383,7 +390,7 @@ def main():
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1
-                if language_check == False:                                                  ################
+                if not language_check:                                                  ################
                     nextWaveText = font.render('Wave ' + str(wave + 1) + ' in', 1, BLUE)
                 else:
                     nextWaveText = font.render('웨이브 ' + str(wave + 1) + ' 단계', 1, BLUE)
@@ -396,7 +403,7 @@ def main():
                     midtop=nextWavePos.midbottom)
                 textposition.extend([nextWavePos, nextWaveNumPos])
                 if wave % 4 == 0:
-                    if language_check == False:                                         #####################
+                    if not language_check:                                         #####################
                         speedUpText = font.render('SPEED UP!', 1, RED)
                     else:
                         speedUpText = font.render('속도 증가!', 1, RED)
@@ -476,7 +483,7 @@ def main():
                 return True
 
         if isHiScore:
-            if language_check == False:                                     #################################
+            if not language_check:                                     #################################
                 hiScoreText = font.render('HIGH SCORE!', 1, RED)
             else:
                 hiScoreText = font.render('최고 기록!', 1, RED)
@@ -484,7 +491,7 @@ def main():
                 midbottom=screen.get_rect().center)
             scoreText = font.render(str(score), 1, BLUE)
             scorePos = scoreText.get_rect(midtop=hiScorePos.midbottom)
-            if language_check == False:                                         #################################
+            if not language_check:                                         #################################
                 enterNameText = font.render('ENTER YOUR NAME:', 1, RED)
             else:
                 enterNameText = font.render('아이디를 적으세요:', 1, RED)
@@ -496,13 +503,13 @@ def main():
                               [hiScorePos, scorePos,
                                enterNamePos, namePos])
         else:
-            if language_check == False:                                     #################################
+            if not language_check:                                     #################################
                 gameOverText = font.render('GAME OVER', 1, BLUE)
             else:
                 gameOverText = font.render('게임 오버', 1, BLUE)
             gameOverPos = gameOverText.get_rect(
                 center=screen.get_rect().center)
-            if language_check == False:                                     #################################
+            if not language_check :                                     #################################
                 scoreText = font.render('SCORE: {}'.format(score), 1, BLUE)
             else:
                 scoreText = font.render('점수: {}'.format(score), 1, BLUE)

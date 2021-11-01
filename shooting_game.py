@@ -38,6 +38,7 @@ def main():
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check=False                                ######### False면 영어, True면 한국어
+    
 
 # Create the background which will scroll and loop over a set of different
 # size stars
@@ -71,6 +72,8 @@ def main():
     ship = Ship()
     initialAlienTypes = (Siney, Spikey)
     powerupTypes = (BombPowerup, ShieldPowerup)
+    k = 0
+    Missile_on = False
 
     # Sprite groups
     alldrawings = pygame.sprite.Group()
@@ -267,6 +270,7 @@ def main():
     ######################### 메인 게임 #####################################
     while ship.alive:
         clock.tick(clockTime)
+        k += 1
 
         if aliensLeftThisWave >= 20:
             powerupTimeLeft -= 1
@@ -290,10 +294,11 @@ def main():
                 ship.vert -= direction[event.key][1] * speed
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_SPACE):
-                Missile.position(ship.rect.midtop)
-                missilesFired += 1
-                if soundFX:
-                    missile_sound.play()
+                k = 0
+                Missile_on = True
+            elif (event.type == pygame.KEYUP
+                  and event.key == pygame.K_SPACE):
+                Missile_on = False
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_b):
                 if bombsHeld > 0:
@@ -302,6 +307,12 @@ def main():
                     newBomb.add(bombs, alldrawings)
                     if soundFX:
                         bomb_sound.play()
+    ####### 공격 #######
+        if Missile_on == True and k%12 == 0:
+            Missile.position(ship.rect.midtop)
+            missilesFired += 1
+            if soundFX:
+                missile_sound.play()
 
     # Collision Detection
         # Aliens

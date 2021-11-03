@@ -82,6 +82,8 @@ def main():
     powerupTypes = (BombPowerup, ShieldPowerup)
     k = 0
     Missile_on = False
+    select_mode = 2; ###1: easy, 2: normal, 3: hard ### default : normal
+    Mode_Dict = {1:["Easy","쉬움"], 2:["Normal","보통"], 3:["Hard", "어려움"]}
 
     # Sprite groups
     alldrawings = pygame.sprite.Group()
@@ -113,9 +115,9 @@ def main():
     missilesFired = 0
     powerupTime = 10 * clockTime
     powerupTimeLeft = powerupTime
-    betweenWaveTime = 3 * clockTime           
+    betweenWaveTime = 3 * clockTime
     betweenWaveCount = betweenWaveTime
-    font = pygame.font.SysFont("notosanscjkkr",20)                          #####한글오류해결#########################
+    font = pygame.font.SysFont('malgungothic', 22)                          ################################
 
     inMenu = True
     hiScores = Database.getScores()
@@ -131,8 +133,6 @@ def main():
 
     title, titleRect = load_image('title.png')
     titleRect.midtop = screen.get_rect().inflate(0, -200).midtop
-    waveclear, waveclearRect = load_image('waveclear450.png')  #####wave넘어가는이미지 불러오기######################
-    waveclearRect.midtop = screen.get_rect().inflate(0, 0).midtop   ####wave넘어가는이미지 위치설정#########################
 
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
@@ -145,19 +145,24 @@ def main():
     quitText = font.render('QUIT', 1, BLUE)
     selectText = font.render('*', 1, BLUE)
     languageText = font.render('언어변경', 1, BLUE)                             ###########################
+    modeText = font.render(Mode_Dict[select_mode][language_check], 1, BLUE)
 
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 100).midbottom)
     hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
+
     fxPos = fxText.get_rect(topleft=hiScorePos.bottomleft)
     fxOnPos = fxOnText.get_rect(topleft=fxPos.topright)
     fxOffPos = fxOffText.get_rect(topleft=fxPos.topright)
     musicPos = fxText.get_rect(topleft=fxPos.bottomleft)
     musicOnPos = musicOnText.get_rect(topleft=musicPos.topright)
     musicOffPos = musicOffText.get_rect(topleft=musicPos.topright)
-    quitPos = quitText.get_rect(topleft=musicPos.bottomleft)
+    modePos = modeText.get_rect(topleft=musicPos.bottomleft) ############
+    quitPos = quitText.get_rect(topleft=modePos.bottomleft)
     selectPos = selectText.get_rect(topright=startPos.topleft)
     languagePos = languageText.get_rect(topleft=quitPos.bottomleft)  ###############################
-    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos, 6:languagePos}    ####################
+    
+    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6 :quitPos, 7:languagePos}    ####################
+    
 
     selection = 1
     showHiScores = False
@@ -201,9 +206,14 @@ def main():
                     else:
                         pygame.mixer.music.stop()
                     Database.setSound(int(music), music=True)
-                elif selection == 5:
+                elif selection == 5 :
+                    if select_mode == 3 :
+                        select_mode = 1
+                    else :
+                        select_mode += 1
+                elif selection == 6:
                     return
-                elif selection == 6:                                     #################################
+                elif selection == 7:                                     #################################
                     language_check = not language_check
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
@@ -230,6 +240,7 @@ def main():
             quitText = font.render('QUIT', 1, BLUE)
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('언어변경', 1, BLUE)
+            modeText = font.render(Mode_Dict[select_mode][language_check], 1, BLUE)
         else:
             startText = font.render('게임 시작', 1, BLUE)
             hiScoreText = font.render('최고 기록', 1, BLUE)
@@ -242,7 +253,7 @@ def main():
             quitText = font.render('종료', 1, BLUE)
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
-        
+            modeText = font.render(Mode_Dict[select_mode][language_check], 1, BLUE)
 
         ###################### 점수 화면 ######################
         if not language_check :                 #################################################
@@ -263,11 +274,11 @@ def main():
             textOverlays = zip(highScoreTexts, highScorePos)
         else:
             textOverlays = zip([startText, hiScoreText, fxText,
-                                musicText, quitText, selectText, languageText,        ###########
+                                musicText, quitText, modeText, selectText, languageText,        ###########
                                 fxOnText if soundFX else fxOffText,
                                 musicOnText if music else musicOffText],
                                [startPos, hiScorePos, fxPos,
-                                musicPos, quitPos, selectPos, languagePos,            ###########
+                                musicPos, quitPos, modePos, selectPos, languagePos,            ###########
                                 fxOnPos if soundFX else fxOffPos,
                                 musicOnPos if music else musicOffPos])
             screen.blit(title, titleRect)
@@ -399,23 +410,21 @@ def main():
         text = [waveText, leftText, scoreText, bombText]
         textposition = [wavePos, leftPos, scorePos, bombPos]
 
-    ###################### 다음 wave : Detertmine when to move to next wave ########################                
+    ###################### 다음 wave : Detertmine when to move to next wave ########################
         if aliensLeftThisWave <= 0:
-            screen.blit(waveclear,waveclearRect)            ####wave 넘어가는 이미지 불러오기 #####
-            pygame.display.flip()                           ####이미지를 화면에 표시#########
-            if betweenWaveCount > 0 :
+            if betweenWaveCount > 0:
                 betweenWaveCount -= 1
-                if not language_check:              ################           
+                if not language_check:                                                  ################
                     nextWaveText = font.render('Wave ' + str(wave + 1) + ' in', 1, BLUE)
                 else:
                     nextWaveText = font.render('웨이브 ' + str(wave + 1) + ' 단계', 1, BLUE)
                 nextWaveNum = font.render(
-                    str((betweenWaveCount // clockTime) + 1), 1, RED)
+                    str((betweenWaveCount // clockTime) + 1), 1, BLUE)
                 text.extend([nextWaveText, nextWaveNum])
                 nextWavePos = nextWaveText.get_rect(
                     center=screen.get_rect().center)
                 nextWaveNumPos = nextWaveNum.get_rect(
-                    midtop=nextWavePos.midbottom)        
+                    midtop=nextWavePos.midbottom)
                 textposition.extend([nextWavePos, nextWaveNumPos])
                 if wave % 4 == 0:
                     if not language_check:                                         #####################
@@ -465,7 +474,6 @@ def main():
     isHiScore = len(hiScores) < Database.numScores or score > hiScores[-1][1]
     name = ''
     nameBuffer = []
-
 
     ############################# Game Over #################################
     while True:

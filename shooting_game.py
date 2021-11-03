@@ -113,9 +113,9 @@ def main():
     missilesFired = 0
     powerupTime = 10 * clockTime
     powerupTimeLeft = powerupTime
-    betweenWaveTime = 3 * clockTime
+    betweenWaveTime = 3 * clockTime           
     betweenWaveCount = betweenWaveTime
-    font = pygame.font.SysFont('malgungothic', 22)                          ################################
+    font = pygame.font.SysFont("notosanscjkkr",20)                          #####한글오류해결#########################
 
     inMenu = True
     hiScores = Database.getScores()
@@ -131,6 +131,8 @@ def main():
 
     title, titleRect = load_image('title.png')
     titleRect.midtop = screen.get_rect().inflate(0, -200).midtop
+    waveclear, waveclearRect = load_image('waveclear450.png')  #####wave넘어가는이미지 불러오기######################
+    waveclearRect.midtop = screen.get_rect().inflate(0, 0).midtop   ####wave넘어가는이미지 위치설정#########################
 
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
@@ -397,21 +399,23 @@ def main():
         text = [waveText, leftText, scoreText, bombText]
         textposition = [wavePos, leftPos, scorePos, bombPos]
 
-    ###################### 다음 wave : Detertmine when to move to next wave ########################
+    ###################### 다음 wave : Detertmine when to move to next wave ########################                
         if aliensLeftThisWave <= 0:
-            if betweenWaveCount > 0:
+            screen.blit(waveclear,waveclearRect)            ####wave 넘어가는 이미지 불러오기 #####
+            pygame.display.flip()                           ####이미지를 화면에 표시#########
+            if betweenWaveCount > 0 :
                 betweenWaveCount -= 1
-                if not language_check:                                                  ################
+                if not language_check:              ################           
                     nextWaveText = font.render('Wave ' + str(wave + 1) + ' in', 1, BLUE)
                 else:
                     nextWaveText = font.render('웨이브 ' + str(wave + 1) + ' 단계', 1, BLUE)
                 nextWaveNum = font.render(
-                    str((betweenWaveCount // clockTime) + 1), 1, BLUE)
+                    str((betweenWaveCount // clockTime) + 1), 1, RED)
                 text.extend([nextWaveText, nextWaveNum])
                 nextWavePos = nextWaveText.get_rect(
                     center=screen.get_rect().center)
                 nextWaveNumPos = nextWaveNum.get_rect(
-                    midtop=nextWavePos.midbottom)
+                    midtop=nextWavePos.midbottom)        
                 textposition.extend([nextWavePos, nextWaveNumPos])
                 if wave % 4 == 0:
                     if not language_check:                                         #####################
@@ -461,6 +465,7 @@ def main():
     isHiScore = len(hiScores) < Database.numScores or score > hiScores[-1][1]
     name = ''
     nameBuffer = []
+
 
     ############################# Game Over #################################
     while True:

@@ -248,7 +248,7 @@ def main():
             aliens_change = 2
             life = 3
         elif select_mode == 3 :
-            bombsHeld = 10
+            bombsHeld = 1
             speed = 1.7
             speed_change = 1
             aliens_change = 3

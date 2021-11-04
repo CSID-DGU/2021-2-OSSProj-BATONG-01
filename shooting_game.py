@@ -21,13 +21,24 @@ GREEN = (0, 255, 0)
 direction = {None: (0, 0), pygame.K_w: (0, -2), pygame.K_s: (0, 2),
              pygame.K_a: (-2, 0), pygame.K_d: (2, 0)}
 
-# class Language_check() :
-#     def __init__(self):
-#         self.state = False ######### False면 영어, True면 한국어
-#     def change_language(self) :
-#         self.state = not self.state
-#     def get_language(self) :
-#         return self.state
+class Language_check() :   ###### 게임 재 시작시 언어 상태 유지
+    def __init__(self):
+        self.state = False ######### False면 영어, True면 한국어
+    def change_language(self) :
+        self.state = not self.state
+    def get_language(self) :
+        return self.state
+
+class Mode_check() : #### 게임 재시작시 모드 선택 유지
+    def __init__(self):
+        self.mode = 2
+    def change_mode(self):
+        if self.mode == 3 :
+            self.mode = 1
+        else :
+            self.mode += 1
+    def get_mode(self) :
+        return self.mode
 
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
@@ -38,6 +49,9 @@ class Keyboard(object):
             pygame.K_u: 'U', pygame.K_v: 'V', pygame.K_w: 'W', pygame.K_x: 'X',
             pygame.K_y: 'Y', pygame.K_z: 'Z'}
 
+language = Language_check()
+mode = Mode_check()
+
 
 def main():
     # Initialize everything
@@ -46,8 +60,8 @@ def main():
     screen = pygame.display.set_mode((500, 500))
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
-    language_check=False                                ######### False면 영어, True면 한국어
-
+    language_check = language.get_language()  ######### False면 영어, True면 한국어
+    select_mode = mode.get_mode() ###1: easy, 2: normal, 3: hard ### default : normal
 
 # Create the background which will scroll and loop over a set of different
 # size stars
@@ -83,7 +97,6 @@ def main():
     powerupTypes = (BombPowerup, ShieldPowerup)
     k = 0
     Missile_on = False
-    select_mode = 2; ###1: easy, 2: normal, 3: hard ### default : normal
     Mode_Dict = {1:["Easy","쉬움"], 2:["Normal","보통"], 3:["Hard", "어려움"]}
 
     # Sprite groups
@@ -152,7 +165,7 @@ def main():
     quitText = font.render('QUIT', 1, BLUE)
     selectText = font.render('*', 1, BLUE)
     languageText = font.render('언어변경', 1, BLUE)                             ###########################
-    modeText = font.render(Mode_Dict[select_mode][language_check], 1, YELLOW)
+    modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
 
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 50).midbottom)
     hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
@@ -214,14 +227,13 @@ def main():
                         pygame.mixer.music.stop()
                     Database.setSound(int(music), music=True)
                 elif selection == 5 :
-                    if select_mode == 3 :
-                        select_mode = 1
-                    else :
-                        select_mode += 1
+                    mode.change_mode()
+                    select_mode = mode.get_mode()
                 elif selection == 6:
                     return
                 elif selection == 7:                                     #################################
-                    language_check = not language_check
+                    language.change_language()
+                    language_check = language.get_language()
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
                   and selection > 1
@@ -235,19 +247,19 @@ def main():
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
         
-        if select_mode == 1 :
+        if mode.get_mode() == 1 :
             speed = 1
             bombsHeld = 5
             speed_change = 0.2
             aliens_change = 1.5
             life = 5
-        elif select_mode == 2 :
+        elif mode.get_mode() == 2 :
             speed = 1.5
             bombsHeld = 3
             speed_change = 0.5
             aliens_change = 2
             life = 3
-        elif select_mode == 3 :
+        elif mode.get_mode() == 3 :
             bombsHeld = 1
             speed = 1.7
             speed_change = 1
@@ -266,7 +278,7 @@ def main():
             quitText = font.render('QUIT', 1, BLUE)
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('언어변경', 1, BLUE)
-            modeText = font.render(Mode_Dict[select_mode][language_check], 1, YELLOW)
+            modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
         else:
             startText = font.render('게임 시작', 1, BLUE)
             hiScoreText = font.render('최고 기록', 1, BLUE)
@@ -279,7 +291,7 @@ def main():
             quitText = font.render('종료', 1, BLUE)
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
-            modeText = font.render(Mode_Dict[select_mode][language_check], 1, YELLOW)
+            modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
 
         ###################### 점수 화면 ######################
         if not language_check :                 #################################################

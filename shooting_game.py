@@ -17,6 +17,7 @@ BLUE = (0, 0, 255)
 RED = (255, 0, 0)                               
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
+WHITE = (255, 255, 255)
 ############### 이동 정의 |2|씩 이동 ##########################
 direction = {None: (0, 0), pygame.K_w: (0, -2), pygame.K_s: (0, 2),
              pygame.K_a: (-2, 0), pygame.K_d: (2, 0)}
@@ -52,7 +53,7 @@ class Keyboard(object):
 language = Language_check()
 mode = Mode_check()
 
-
+###############  MAIN ###############################################
 def main():
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
@@ -99,7 +100,7 @@ def main():
     Missile_on = False
     Mode_Dict = {1:["Easy","쉬움"], 2:["Normal","보통"], 3:["Hard", "어려움"]}
 
-    # Sprite groups
+    #### Sprite groups
     alldrawings = pygame.sprite.Group()
     allsprites = pygame.sprite.RenderPlain((ship,))
     MasterSprite.allsprites = allsprites
@@ -244,6 +245,10 @@ def main():
                   and selection < len(menuDict)
                   and not showHiScores):
                 selection += 1
+            elif (event.type == pygame.QUIT ##menu 화면에서도 esc누르면 꺼지게
+                or event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_ESCAPE):
+                return
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
         
@@ -404,12 +409,19 @@ def main():
                     score += 1
                     missilesFired += 1
                     ship.shieldUp = False
-                else:
-                    ship.alive = False
-                    ship.remove(allsprites)
-                    Explosion.position(ship.rect.center)
-                    if soundFX:
-                        ship_explode_sound.play()
+                else: ### 쉴드 없을때
+                    if life == 1:
+                        life -= 1
+                        ship.alive = False
+                        ship.remove(allsprites)
+                        Explosion.position(ship.rect.center)
+                        if soundFX:
+                            ship_explode_sound.play()
+                    else :
+                        alien.table()
+                        life -= 1
+                        Explosion.position(alien.rect.center)
+                        aliensLeftThisWave -= 1
 
         # PowerUps
         for powerup in powerups:
@@ -435,25 +447,27 @@ def main():
             leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),1, BLUE)
             scoreText = font.render("Score: " + str(score), 1, BLUE)
             bombText = font.render("Bombs: " + str(bombsHeld), 1, BLUE)
+            lifeText = font.render("Life : "+str(life), 1, WHITE) ## 정상적으로 작동하는지 확인하기 위함
         else: 
             waveText = font.render("웨이브: " + str(wave), 1, BLUE)
             leftText = font.render("남은 적: " + str(aliensLeftThisWave), 1, BLUE)
             scoreText = font.render("점수: " + str(score), 1, BLUE)
             bombText = font.render("폭탄: " + str(bombsHeld), 1, BLUE)
+            lifeText = font.render("목숨 : "+str(life), 1, WHITE) ### 임시
 
         wavePos = waveText.get_rect(topleft=screen.get_rect().topleft)
         leftPos = leftText.get_rect(midtop=screen.get_rect().midtop)
         scorePos = scoreText.get_rect(topright=screen.get_rect().topright)
         bombPos = bombText.get_rect(bottomleft=screen.get_rect().bottomleft)
-
-        text = [waveText, leftText, scoreText, bombText]
-        textposition = [wavePos, leftPos, scorePos, bombPos]
+        lifePos = lifeText.get_rect(midtop = scorePos.midbottom)
+        text = [waveText, leftText, scoreText, bombText, lifeText]
+        textposition = [wavePos, leftPos, scorePos, bombPos, lifePos]
 
     ###################### 다음 wave : Detertmine when to move to next wave ########################
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
                 screen.blit(waveclear,waveclearRect)            ####wave 넘어가는 이미지 불러오기 #####
-                #pygame.display.filp()                           ####이미지를 화면에 표시#########
+                pygame.display.flip()                           ####이미지를 화면에 표시#########
                 if betweenWaveCount > 0 :
                     betweenWaveCount -= 1
                 if not language_check:                                                  ################

@@ -1,6 +1,9 @@
+from sqlite3.dbapi2 import threadsafety
 import pygame
 import random
 from collections import deque
+
+from pygame import draw
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, Explosion, Siney, Spikey, Fasty,
@@ -154,7 +157,12 @@ def main():
     titleRect.midtop = screen.get_rect().inflate(0, -200).midtop
     waveclear, waveclearRect = load_image('waveclear450.png')  #####wave넘어가는이미지 불러오기######################
     waveclearRect.midtop = screen.get_rect().inflate(0, 0).midtop   ####wave넘어가는이미지 위치설정#########################
-
+    
+    life_img, life_img_rect = load_image('heart.png',-1)
+    life_img = pygame.transform.scale(life_img, (40,40))
+    
+   
+    
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
     fxText = font.render('SOUND FX ', 1, GREEN)
@@ -251,7 +259,7 @@ def main():
                 return
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
-        
+        #####mode select######
         if mode.get_mode() == 1 :
             speed = 1
             bombsHeld = 5
@@ -326,6 +334,7 @@ def main():
                                 fxOnPos if soundFX else fxOffPos,
                                 musicOnPos if music else musicOffPos])
             screen.blit(title, titleRect)
+
         for txt, pos in textOverlays:
             screen.blit(txt, pos)
         pygame.display.flip()
@@ -447,21 +456,28 @@ def main():
             leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),1, BLUE)
             scoreText = font.render("Score: " + str(score), 1, BLUE)
             bombText = font.render("Bombs: " + str(bombsHeld), 1, BLUE)
-            lifeText = font.render("Life : "+str(life), 1, WHITE) ## 정상적으로 작동하는지 확인하기 위함
+            
         else: 
             waveText = font.render("웨이브: " + str(wave), 1, BLUE)
             leftText = font.render("남은 적: " + str(aliensLeftThisWave), 1, BLUE)
             scoreText = font.render("점수: " + str(score), 1, BLUE)
             bombText = font.render("폭탄: " + str(bombsHeld), 1, BLUE)
-            lifeText = font.render("목숨 : "+str(life), 1, WHITE) ### 임시
+           
 
         wavePos = waveText.get_rect(topleft=screen.get_rect().topleft)
         leftPos = leftText.get_rect(midtop=screen.get_rect().midtop)
         scorePos = scoreText.get_rect(topright=screen.get_rect().topright)
         bombPos = bombText.get_rect(bottomleft=screen.get_rect().bottomleft)
-        lifePos = lifeText.get_rect(midtop = scorePos.midbottom)
-        text = [waveText, leftText, scoreText, bombText, lifeText]
-        textposition = [wavePos, leftPos, scorePos, bombPos, lifePos]
+       
+        text = [waveText, leftText, scoreText, bombText]
+        textposition = [wavePos, leftPos, scorePos, bombPos]
+
+        #####하트 여러 개 그리기 ###
+        heart = []
+        heartPos = []
+        for i in range(life+1):
+            heart.append(life_img)
+            heartPos.append([screen.get_width()-life_img.get_width()*i, scoreText.get_height()])
 
     ###################### 다음 wave : Detertmine when to move to next wave ########################
         if aliensLeftThisWave <= 0:
@@ -514,6 +530,9 @@ def main():
         textOverlays = zip(text, textposition)
 
     ################# Update and draw all sprites and text
+        
+       
+        
         screen.blit(
             background, (0, 0), area=pygame.Rect(
                 0, backgroundLoc, 500, 500))
@@ -525,6 +544,9 @@ def main():
         alldrawings.update()
         for txt, pos in textOverlays:
             screen.blit(txt, pos)
+        heartOverlays = zip(heart, heartPos)
+        for img, pos in heartOverlays :
+            screen.blit(img, pos)
         pygame.display.flip()
 
     accuracy = round(score / missilesFired, 4) if missilesFired > 0 else 0.0

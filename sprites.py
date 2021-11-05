@@ -12,22 +12,6 @@ class MasterSprite(pygame.sprite.Sprite):
     allsprites = None
     speed = None
 
-# class life(MasterSprite):
-#     ## 하트가 남은 목숨 개수만큼 화면에 표시되게 하는 클래스
-#     def __init__(self, left):
-#         ## left가 남은 목숨의 개수
-#         self.image, self.rect = load_image('heart.png', -1)
-#         screen = pygame.display.get_surface()
-#         self.area = screen.get_rect()
-#         self.left = left
-    
-#     def position(self):
-#         ### left만큼 화면에 왼쪽부터 표시
-#         for i in range(self.left) :
-            
-#     def update(self) :
-#         ###collision이 발생했을때 life.update를 불러와서 하트개수 -1
-
 
 class Explosion(MasterSprite): 
     pool = pygame.sprite.Group()

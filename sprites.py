@@ -3,13 +3,17 @@ import random
 import math
 from load import load_image
 
+### pygame.sprite.Sprite 자식 클래스 
+### -> MasterSprite, Bomb 
 
 class MasterSprite(pygame.sprite.Sprite):
+    ### 자식 클래스들 : Explosion, Missile, Powerup(<- BombPowerup, ShieldPowerup),
+    ###              Ship, Alien 
     allsprites = None
     speed = None
 
 
-class Explosion(MasterSprite):
+class Explosion(MasterSprite): 
     pool = pygame.sprite.Group()
     active = pygame.sprite.Group()
 
@@ -64,6 +68,7 @@ class Missile(MasterSprite):
 
 
 class Bomb(pygame.sprite.Sprite):
+    ### 폭탄이 터질때
     def __init__(self, ship):
         super().__init__()
         self.image = None
@@ -87,12 +92,14 @@ class Bomb(pygame.sprite.Sprite):
 
 
 class Powerup(MasterSprite):
+    ## 아이템 획득
     def __init__(self, kindof):
         super().__init__()
         self.image, self.rect = load_image(kindof + '_powerup.png', -1)
         self.original = self.image
         screen = pygame.display.get_surface()
         self.area = screen.get_rect()
+        ### random한 위치에 드롭
         self.rect.midtop = (random.randint(
                             self.area.left + self.rect.width // 2,
                             self.area.right - self.rect.width // 2),
@@ -133,7 +140,7 @@ class Ship(MasterSprite):
         self.area = self.screen.get_rect()
         self.rect.midbottom = (self.screen.get_width() // 2, self.area.bottom)
         self.radius = max(self.rect.width, self.rect.height)
-        self.alive = True
+        self.alive = True  ##### life
         self.shieldUp = False
         self.vert = 0
         self.horiz = 0
@@ -179,6 +186,7 @@ class Ship(MasterSprite):
 
 
 class Alien(MasterSprite):
+    ##Siney : green, Roundy : red, Spikey : blue, Fasty : white, Crawly : yellow
     pool = pygame.sprite.Group()
     active = pygame.sprite.Group()
 

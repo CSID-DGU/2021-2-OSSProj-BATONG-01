@@ -2,6 +2,7 @@ from sqlite3.dbapi2 import threadsafety
 import pygame
 import random
 from collections import deque
+###
 
 from pygame import draw
 
@@ -482,10 +483,7 @@ def main():
     ###################### 다음 wave : Detertmine when to move to next wave ########################
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
-                screen.blit(waveclear,waveclearRect)            ####wave 넘어가는 이미지 불러오기 #####
-                pygame.display.flip()                           ####이미지를 화면에 표시#########
-                if betweenWaveCount > 0 :
-                    betweenWaveCount -= 1
+                betweenWaveCount -= 1
                 if not language_check:                                                  ################
                     nextWaveText = font.render('Wave ' + str(wave + 1) + ' in', 1, BLUE)
                 else:

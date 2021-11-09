@@ -1,4 +1,3 @@
-from sqlite3.dbapi2 import threadsafety
 import pygame
 import random
 from collections import deque
@@ -165,6 +164,7 @@ def main():
    
     
     startText = font.render('START GAME', 1, BLUE)
+    resumeText = font.render('RESUME', 1, BLUE) # 일시정지 메뉴 text
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
     fxText = font.render('SOUND FX ', 1, GREEN)
     fxOnText = font.render('ON', 1, RED)
@@ -178,6 +178,7 @@ def main():
     modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
 
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 50).midbottom)
+    resumePos = resumeText.get_rect(midtop=titleRect.inflate(0, 50).midbottom) # 일시정지 메뉴 pos
     hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
 
     fxPos = fxText.get_rect(topleft=hiScorePos.bottomleft)
@@ -381,14 +382,163 @@ def main():
                     newBomb.add(bombs, alldrawings)
                     if soundFX:
                         bomb_sound.play()
-    ####### 공격 #######
+
+            ####### 일시정지 #######
+            #현재 RESUME GAME 메뉴 글자가 밀리는 오류가 있음
+            elif (event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_p):
+                pauseMenu = True
+                menuDict = {1: resumePos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6: quitPos,
+                            7: languagePos}
+
+                while pauseMenu:
+                    clock.tick(clockTime)
+
+                    screen.blit(
+                        background, (0, 0), area=pygame.Rect(
+                            0, backgroundLoc, 500, 500))
+                    backgroundLoc -= speed
+                    if backgroundLoc - speed <= speed:
+                        backgroundLoc = 1500
+
+                    for event in pygame.event.get():
+                        if (event.type == pygame.QUIT):
+                            return
+                        elif (event.type == pygame.KEYDOWN
+                              and event.key == pygame.K_p):
+                            pauseMenu = False
+                        elif (event.type == pygame.KEYDOWN
+                              and event.key == pygame.K_RETURN):
+                            if showHiScores:
+                                showHiScores = False
+                            elif selection == 1:
+                                pauseMenu = False
+                            elif selection == 2:
+                                showHiScores = True
+                            elif selection == 3:
+                                soundFX = not soundFX
+                                if soundFX:
+                                    missile_sound.play()
+                                Database.setSound(int(soundFX))
+                            elif selection == 4 and pygame.mixer:
+                                music = not music
+                                if music:
+                                    pygame.mixer.music.play(loops=-1)
+                                else:
+                                    pygame.mixer.music.stop()
+                                Database.setSound(int(music), music=True)
+                            elif selection == 5:
+                                mode.change_mode()
+                                select_mode = mode.get_mode()
+                            elif selection == 6:
+                                return
+                            elif selection == 7:  #################################
+                                language.change_language()
+                                language_check = language.get_language()
+                        elif (event.type == pygame.KEYDOWN
+                              and event.key == pygame.K_w
+                              and selection > 1
+                              and not showHiScores):
+                            selection -= 1
+                        elif (event.type == pygame.KEYDOWN
+                              and event.key == pygame.K_s
+                              and selection < len(menuDict)
+                              and not showHiScores):
+                            selection += 1
+                        elif (event.type == pygame.QUIT  ##menu 화면에서도 esc누르면 꺼지게
+                              or event.type == pygame.KEYDOWN
+                              and event.key == pygame.K_ESCAPE):
+                            return
+
+                    selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
+                    #####mode select######
+                    if mode.get_mode() == 1:
+                        speed = 1
+                        bombsHeld = 5
+                        speed_change = 0.2
+                        aliens_change = 1.5
+                        life = 5
+                    elif mode.get_mode() == 2:
+                        speed = 1.5
+                        bombsHeld = 3
+                        speed_change = 0.5
+                        aliens_change = 2
+                        life = 3
+                    elif mode.get_mode() == 3:
+                        bombsHeld = 1
+                        speed = 1.7
+                        speed_change = 1
+                        aliens_change = 3
+                        life = 1
+
+                    if not language_check:  #################################################
+                        resumeText = font.render('RESUME GAME', 1, BLUE)
+                        hiScoreText = font.render('HIGH SCORES', 1, BLUE)
+                        fxText = font.render('SOUND FX ', 1, GREEN)
+                        fxOnText = font.render('ON', 1, RED)
+                        fxOffText = font.render('OFF', 1, RED)
+                        musicText = font.render('MUSIC', 1, GREEN)
+                        musicOnText = font.render('ON', 1, RED)
+                        musicOffText = font.render('OFF', 1, RED)
+                        quitText = font.render('QUIT', 1, BLUE)
+                        selectText = font.render('*', 1, BLUE)
+                        languageText = font.render('언어변경', 1, BLUE)
+                        modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+                    else:
+                        resumeText = font.render('계속 하기', 1, BLUE)
+                        hiScoreText = font.render('최고 기록', 1, BLUE)
+                        fxText = font.render('효과음', 1, GREEN)
+                        fxOnText = font.render('켜기', 1, RED)
+                        fxOffText = font.render('끄기', 1, RED)
+                        musicText = font.render('음악', 1, GREEN)
+                        musicOnText = font.render('켜기', 1, RED)
+                        musicOffText = font.render('끄기', 1, RED)
+                        quitText = font.render('종료', 1, BLUE)
+                        selectText = font.render('*', 1, BLUE)
+                        languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
+                        modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+
+                    ###################### 점수 화면 ######################
+                    if not language_check:  #################################################
+                        highScoreTexts = [font.render("NAME", 1, RED),
+                                          font.render("SCORE", 1, RED),
+                                          font.render("ACCURACY", 1, RED)]
+                    else:
+                        highScoreTexts = [font.render("이름", 1, RED),
+                                          font.render("점수", 1, RED),
+                                          font.render("정확도", 1, RED)]
+
+                    for hs in hiScores:  ###########원래 while inMenu밖에 있었는데 안으로 가져옴
+                        highScoreTexts.extend([font.render(str(hs[x]), 1, BLUE)
+                                               for x in range(3)])
+                        highScorePos.extend([highScoreTexts[x].get_rect(
+                            topleft=highScorePos[x].bottomleft) for x in range(-3, 0)])
+
+                    if showHiScores:
+                        textOverlays = zip(highScoreTexts, highScorePos)
+                    else:
+                        textOverlays = zip([resumeText, hiScoreText, fxText,
+                                            musicText, quitText, modeText, selectText, languageText,  ###########
+                                            fxOnText if soundFX else fxOffText,
+                                            musicOnText if music else musicOffText],
+                                           [resumePos, hiScorePos, fxPos,
+                                            musicPos, quitPos, modePos, selectPos, languagePos,  ###########
+                                            fxOnPos if soundFX else fxOffPos,
+                                            musicOnPos if music else musicOffPos])
+                        screen.blit(title, titleRect)
+
+                    for txt, pos in textOverlays:
+                        screen.blit(txt, pos)
+                    pygame.display.flip()
+
+        ####### 공격 #######
         if Missile_on == True and k%12 == 0:
             Missile.position(ship.rect.midtop)
             missilesFired += 1
             if soundFX:
                 missile_sound.play()
 
-    # Collision Detection
+        # Collision Detection
         # Aliens
         for alien in Alien.active:
             for bomb in bombs:

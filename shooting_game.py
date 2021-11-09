@@ -345,7 +345,7 @@ def main():
     while ship.alive:
         clock.tick(clockTime)
         k += 1
-        #######아이템 드롭#############3333
+        #######아이템 드롭#############
         if aliensLeftThisWave >= 1:
             powerupTimeLeft -= 1
         if powerupTimeLeft <= 0:

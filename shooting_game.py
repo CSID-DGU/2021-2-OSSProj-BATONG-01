@@ -2,11 +2,12 @@ from sqlite3.dbapi2 import threadsafety
 import pygame
 import random
 from collections import deque
+###
 
 from pygame import draw
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
-                     ShieldPowerup, Explosion, Siney, Spikey, Fasty,
+                     ShieldPowerup, HalfPowerup, Explosion, Siney, Spikey, Fasty,
                      Roundy, Crawly)
 from database import Database
 from load import load_image, load_sound, load_music
@@ -98,7 +99,7 @@ def main():
     clock = pygame.time.Clock()
     ship = Ship()
     initialAlienTypes = (Siney, Spikey)
-    powerupTypes = (BombPowerup, ShieldPowerup)
+    powerupTypes = (BombPowerup, ShieldPowerup, HalfPowerup)
     k = 0
     Missile_on = False
     Mode_Dict = {1:["Easy","쉬움"], 2:["Normal","보통"], 3:["Hard", "어려움"]}
@@ -344,8 +345,8 @@ def main():
     while ship.alive:
         clock.tick(clockTime)
         k += 1
-
-        if aliensLeftThisWave >= 20:
+        #######아이템 드롭#############3333
+        if aliensLeftThisWave >= 1:
             powerupTimeLeft -= 1
         if powerupTimeLeft <= 0:
             powerupTimeLeft = powerupTime
@@ -396,8 +397,11 @@ def main():
                     alien.table()
                     Explosion.position(alien.rect.center)
                     missilesFired += 1
-                    aliensLeftThisWave -= 1
-                    score += 1
+                    if aliensLeftThisWave>0 :
+                        aliensLeftThisWave -= 1
+                        score += 1
+                    else :
+                        aliensLeftThisWave = 0
                     if soundFX:
                         alien_explode_sound.play()
             for missile in Missile.active:
@@ -406,17 +410,22 @@ def main():
                     alien.table()
                     missile.table()
                     Explosion.position(alien.rect.center)
-                    aliensLeftThisWave -= 1
-                    score += 1
+                    if aliensLeftThisWave>0 :
+                        aliensLeftThisWave -= 1
+                        score += 1
+                        missilesFired += 1
+                    else :
+                        aliensLeftThisWave = 0
+                    
                     if soundFX:
                         alien_explode_sound.play()
             if pygame.sprite.collide_rect(alien, ship):
                 if ship.shieldUp:
                     alien.table()
                     Explosion.position(alien.rect.center)
-                    aliensLeftThisWave -= 1
-                    score += 1
-                    missilesFired += 1
+                    if aliensLeftThisWave>0 :
+                        aliensLeftThisWave -= 1
+                        score += 1
                     ship.shieldUp = False
                 else: ### 쉴드 없을때
                     if life == 1:
@@ -430,7 +439,10 @@ def main():
                         alien.table()
                         life -= 1
                         Explosion.position(alien.rect.center)
-                        aliensLeftThisWave -= 1
+                        if aliensLeftThisWave > 0 :
+                            aliensLeftThisWave -= 1
+                        else :
+                            aliensLeftThisWave = 0
 
         # PowerUps
         for powerup in powerups:
@@ -439,6 +451,16 @@ def main():
                     bombsHeld += 1
                 elif powerup.pType == 'shield':
                     ship.shieldUp = True
+                elif powerup.pType == 'half' :
+                    num_of_alien = len(Alien.active.sprites())
+                    for alien in Alien.active :
+                        alien.table()
+                    pygame.time.delay(20)
+                    if aliensLeftThisWave < num_of_alien :
+                        aliensLeftThisWave = 0
+                    else  :
+                        aliensLeftThisWave -= num_of_alien
+                        aliensLeftThisWave = round(aliensLeftThisWave/2)
                 powerup.kill()
             elif powerup.rect.top > powerup.area.bottom:
                 powerup.kill()
@@ -482,10 +504,7 @@ def main():
     ###################### 다음 wave : Detertmine when to move to next wave ########################
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
-                screen.blit(waveclear,waveclearRect)            ####wave 넘어가는 이미지 불러오기 #####
-                pygame.display.flip()                           ####이미지를 화면에 표시#########
-                if betweenWaveCount > 0 :
-                    betweenWaveCount -= 1
+                betweenWaveCount -= 1
                 if not language_check:                                                  ################
                     nextWaveText = font.render('Wave ' + str(wave + 1) + ' in', 1, BLUE)
                 else:

@@ -90,7 +90,6 @@ class Bomb(pygame.sprite.Sprite):
                 and self.rect.center[0] + self.radius >= self.area.right):
             self.kill()
 
-
 class Powerup(MasterSprite):
     ## 아이템 획득
     def __init__(self, kindof):
@@ -129,6 +128,11 @@ class ShieldPowerup(Powerup):
         super().__init__('shield')
         self.pType = 'shield'
 
+class HalfPowerup(Powerup):
+    def __init__(self):
+        super().__init__('half')
+        self.pType = 'half'
+        self.image = pygame.transform.scale(self.image, (50,30))
 
 class Ship(MasterSprite):
     def __init__(self):

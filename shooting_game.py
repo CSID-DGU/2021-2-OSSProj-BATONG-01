@@ -62,7 +62,7 @@ def main():
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
     pygame.init()
-    screen = pygame.display.set_mode((500, 500))
+    screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check = language.get_language()  ######### False면 영어, True면 한국어
@@ -346,7 +346,7 @@ def main():
         clock.tick(clockTime)
         k += 1
         #######아이템 드롭#############
-        if aliensLeftThisWave >= 1:
+        if aliensLeftThisWave >= 1 :
             powerupTimeLeft -= 1
         if powerupTimeLeft <= 0:
             powerupTimeLeft = powerupTime

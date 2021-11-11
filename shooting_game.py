@@ -501,7 +501,7 @@ def main():
             leftText = font.render("남은 적: " + str(aliensLeftThisWave), 1, BLUE)
             scoreText = font.render("점수: " + str(score), 1, BLUE)
             bombText = font.render("폭탄: " + str(bombsHeld), 1, BLUE)
-            coinText = font.render("Coins: "+str(coin_Have), 1, BLUE)
+            coinText = font.render("코인: "+str(coin_Have), 1, BLUE)
 
         wavePos = waveText.get_rect(topleft=screen.get_rect().topleft)
         leftPos = leftText.get_rect(midtop=screen.get_rect().midtop)

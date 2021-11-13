@@ -46,6 +46,17 @@ class Mode_check() : #### 게임 재시작시 모드 선택 유지
     def get_mode(self) :
         return self.mode
 
+class Ship_selection_check() : #### 게임 재시작시 변경한 기체이미지 유지
+    def __init__(self):
+        self.ship_selection = 1
+    def ship_selection_plus(self):
+        self.ship_selection += 1
+    def ship_selection_minus(self):
+        self.ship_selection -= 1
+    def get_ship_selection(self) :
+        return self.ship_selection
+
+
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -57,6 +68,7 @@ class Keyboard(object):
 
 language = Language_check()
 mode = Mode_check()
+ship_selection = Ship_selection_check() ###############
 
 ###############  MAIN ###############################################
 def main():
@@ -172,11 +184,14 @@ def main():
     ship4, ship4Rect = load_image('ship4.png')
     ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft 
 
+
+    #####기체이미지 변경 변수들###########
     ship1Text = font.render('', 1, BLUE)
     ship2Text = font.render('', 1, BLUE)
     ship3Text = font.render('', 1, BLUE)
     ship4Text = font.render('', 1, BLUE)
     ship_selectText = font.render('SELECT', 1, BLUE)
+
     ship1Pos = ship1Text.get_rect(midbottom=ship1Rect.inflate(0, 0).midbottom)
     ship2Pos = ship2Text.get_rect(midbottom=ship2Rect.inflate(0, 0).midbottom)
     ship3Pos = ship3Text.get_rect(midbottom=ship3Rect.inflate(0, 0).midbottom)
@@ -184,8 +199,10 @@ def main():
     ship_selectPos = ship_selectText.get_rect(midbottom=ship1Rect.inflate(0, 60).midbottom)
     
     ship_menuDict = {1: ship1Pos, 2: ship2Pos, 3: ship3Pos, 4: ship4Pos}
-    ship_selection = 1
-    
+    ##################################
+
+
+
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
     fxText = font.render('SOUND FX ', 1, GREEN)
@@ -247,6 +264,58 @@ def main():
                 elif selection == 1:
                     inMenu = False
                     ship.initializeKeys()
+                    if ship_selection.get_ship_selection() == 1:      #####게임 시작시 설정한 기체이미지에 맞게 변경####
+                        ship.image, ship.rect = load_image('ship.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
+                    elif ship_selection.get_ship_selection() == 2:
+                        ship.image, ship.rect = load_image('ship2.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship2_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
+                    elif ship_selection.get_ship_selection() == 3:
+                        ship.image, ship.rect = load_image('ship3.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship3_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
+                    elif ship_selection.get_ship_selection() == 4:
+                        ship.image, ship.rect = load_image('ship4.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship4_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
                 elif selection == 2:
                     showHiScores = True
                 elif selection == 3:
@@ -288,81 +357,24 @@ def main():
                 and event.key == pygame.K_ESCAPE):
                 return
 
-            ####기체이미지 변경########
+            ####기체이미지 변경 창########
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_RETURN and showChange_ship):
-                if showHiScores:
-                    showHiScores = False
-                elif ship_selection == 1:
-                    ship.image, ship.rect = load_image('ship.png', -1)
-                    ship.original = ship.image
-                    ship.shield, ship.rect = load_image('ship_shield.png', -1)
-                    ship.screen = pygame.display.get_surface()
-                    ship.area = ship.screen.get_rect()
-                    ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                    ship.radius = max(ship.rect.width, ship.rect.height)
-                    ship.alive = True  ##### life
-                    ship.shieldUp = False
-                    ship.vert = 0
-                    ship.horiz = 0
-                    showChange_ship = False
-                    showChange_ship = False
-                elif ship_selection == 2:
-                    ship.image, ship.rect = load_image('ship2.png', -1)
-                    ship.original = ship.image
-                    ship.shield, ship.rect = load_image('ship2_shield.png', -1)
-                    ship.screen = pygame.display.get_surface()
-                    ship.area = ship.screen.get_rect()
-                    ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                    ship.radius = max(ship.rect.width, ship.rect.height)
-                    ship.alive = True  ##### life
-                    ship.shieldUp = False
-                    ship.vert = 0
-                    ship.horiz = 0
-                    showChange_ship = False
-                elif ship_selection == 3:
-                    ship.image, ship.rect = load_image('ship3.png', -1)
-                    ship.original = ship.image
-                    ship.shield, ship.rect = load_image('ship3_shield.png', -1)
-                    ship.screen = pygame.display.get_surface()
-                    ship.area = ship.screen.get_rect()
-                    ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                    ship.radius = max(ship.rect.width, ship.rect.height)
-                    ship.alive = True  ##### life
-                    ship.shieldUp = False
-                    ship.vert = 0
-                    ship.horiz = 0
-                    showChange_ship = False
-                    showChange_ship = False
-                elif ship_selection == 4:
-                    ship.image, ship.rect = load_image('ship4.png', -1)
-                    ship.original = ship.image
-                    ship.shield, ship.rect = load_image('ship4_shield.png', -1)
-                    ship.screen = pygame.display.get_surface()
-                    ship.area = ship.screen.get_rect()
-                    ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                    ship.radius = max(ship.rect.width, ship.rect.height)
-                    ship.alive = True  ##### life
-                    ship.shieldUp = False
-                    ship.vert = 0
-                    ship.horiz = 0
-                    showChange_ship = False
-                    showChange_ship = False
+                showChange_ship = False
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_a
-                and ship_selection > 1
+                and ship_selection.get_ship_selection() > 1
                 and not showHiScores
                 and showChange_ship):
-                ship_selection -= 1
+                ship_selection.ship_selection_minus()
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_d
-                and ship_selection < len(ship_menuDict)
+                and ship_selection.get_ship_selection() < len(ship_menuDict)
                 and not showHiScores
                 and showChange_ship):
-                ship_selection += 1
+                ship_selection.ship_selection_plus()
             
-
-        ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection].inflate(0,60).midbottom)
+        ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
         
         #####mode select######

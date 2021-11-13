@@ -5,6 +5,7 @@ from collections import deque
 ###
 
 from pygame import draw
+from pygame.constants import VIDEORESIZE
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, HalfPowerup, Explosion, Siney, Spikey, Fasty,
@@ -62,7 +63,7 @@ def main():
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
     pygame.init()
-    screen = pygame.display.set_mode((500, 500))
+    screen = pygame.display.set_mode((500, 500),pygame.RESIZABLE)
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check = language.get_language()  ######### False면 영어, True면 한국어
@@ -162,7 +163,28 @@ def main():
     life_img, life_img_rect = load_image('heart.png',-1)
     life_img = pygame.transform.scale(life_img, (40,40))
     
-   
+    ship1, ship1Rect = load_image('ship.png')
+    ship1Rect.midleft = screen.get_rect().inflate(-112, 0).midleft 
+    ship2, ship2Rect = load_image('ship2.png')
+    ship2Rect.midleft = screen.get_rect().inflate(-337, 0).midleft 
+    ship3, ship3Rect = load_image('ship3.png')
+    ship3Rect.midleft = screen.get_rect().inflate(-562, 0).midleft 
+    ship4, ship4Rect = load_image('ship4.png')
+    ship4Rect.midleft = screen.get_rect().inflate(-787, 0).midleft 
+
+    ship1Text = font.render('ship1', 1, BLUE)
+    ship2Text = font.render('ship2', 1, BLUE)
+    ship3Text = font.render('ship3', 1, BLUE)
+    ship4Text = font.render('ship4', 1, BLUE)
+    ship_selectText = font.render('^', 1, RED)
+    ship1Pos = ship1Text.get_rect(midbottom=ship1Rect.inflate(0, 0).midbottom)
+    ship2Pos = ship2Text.get_rect(midbottom=ship2Rect.inflate(0, 0).midbottom)
+    ship3Pos = ship3Text.get_rect(midbottom=ship3Rect.inflate(0, 0).midbottom)
+    ship4Pos = ship4Text.get_rect(midbottom=ship4Rect.inflate(0, 0).midbottom)
+    ship_selectPos = ship_selectText.get_rect(midbottom=ship1Rect.inflate(0, 60).midbottom)
+    
+    ship_menuDict = {1: ship1Pos, 2: ship2Pos, 3: ship3Pos, 4: ship4Pos}
+    ship_selection = 1
     
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
@@ -176,10 +198,10 @@ def main():
     selectText = font.render('*', 1, BLUE)
     languageText = font.render('언어변경', 1, BLUE)                             ###########################
     modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+    change_shipText = font.render('CHANGE SHIP', 1, BLUE) 
 
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 50).midbottom)
     hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
-
     fxPos = fxText.get_rect(topleft=hiScorePos.bottomleft)
     fxOnPos = fxOnText.get_rect(topleft=fxPos.topright)
     fxOffPos = fxOffText.get_rect(topleft=fxPos.topright)
@@ -190,12 +212,14 @@ def main():
     quitPos = quitText.get_rect(topleft=modePos.bottomleft)
     selectPos = selectText.get_rect(topright=startPos.topleft)
     languagePos = languageText.get_rect(topleft=quitPos.bottomleft)  ###############################
-    
-    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6 :quitPos, 7:languagePos}    ####################
+    change_shipPos = change_shipText.get_rect(topleft=languagePos.bottomleft)
+
+    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6 :quitPos, 7:languagePos, 8:change_shipPos}    ####################
     
 
     selection = 1
     showHiScores = False
+    showChange_ship = False
     soundFX = Database.getSound()
     music = Database.getSound(music=True)
     if music and pygame.mixer:
@@ -213,6 +237,7 @@ def main():
             backgroundLoc = 1500
 
         for event in pygame.event.get():
+            
             if (event.type == pygame.QUIT):
                 return
             elif (event.type == pygame.KEYDOWN
@@ -244,6 +269,9 @@ def main():
                 elif selection == 7:                                     #################################
                     language.change_language()
                     language_check = language.get_language()
+                elif selection == 8:
+                    showChange_ship = True
+
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
                   and selection > 1
@@ -260,6 +288,7 @@ def main():
                 return
 
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
+        
         #####mode select######
         if mode.get_mode() == 1 :
             speed = 1
@@ -293,6 +322,7 @@ def main():
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('언어변경', 1, BLUE)
             modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+            change_shipText = font.render('CHANGE SHIP', 1, BLUE)
         else:
             startText = font.render('게임 시작', 1, BLUE)
             hiScoreText = font.render('최고 기록', 1, BLUE)
@@ -306,6 +336,7 @@ def main():
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
             modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+            change_shipText = font.render('기체 변경', 1, BLUE)
 
         ###################### 점수 화면 ######################
         if not language_check :                 #################################################
@@ -322,16 +353,70 @@ def main():
                                    for x in range(3)])
             highScorePos.extend([highScoreTexts[x].get_rect(
                 topleft=highScorePos[x].bottomleft) for x in range(-3, 0)])
-            
+
+        
+
+
         if showHiScores:
             textOverlays = zip(highScoreTexts, highScorePos)
+
+        elif showChange_ship:
+            #textOverlays = zip([ship1Text,ship2Text,ship3Text,ship4Text,ship_selectText],[ship1Pos,ship2Pos,ship3Pos,ship4Pos,ship_selectPos])
+            screen.blit(ship1, ship1Rect)
+            screen.blit(ship2, ship2Rect)
+            screen.blit(ship3, ship3Rect)
+            screen.blit(ship4, ship4Rect)
+
+            for event in pygame.event.get():
+                if (event.type == pygame.QUIT):
+                    return
+                elif (event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_RETURN):
+                    if showHiScores:
+                        showHiScores = False
+                    elif ship_selection == 1:
+                        inMenu = False
+                        ship.initializeKeys()
+                    elif ship_selection == 2:
+                        showHiScores = True
+                    elif ship_selection == 3:
+                        soundFX = not soundFX
+                        if soundFX:
+                            missile_sound.play()
+                        Database.setSound(int(soundFX))
+                    elif ship_selection == 4 and pygame.mixer:
+                        music = not music
+                        if music:
+                            pygame.mixer.music.play(loops=-1)
+                        else:
+                            pygame.mixer.music.stop()
+                        Database.setSound(int(music), music=True)
+                elif (event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_a
+                    and ship_selection > 1
+                    and not showHiScores):
+                    ship_selection -= 1
+                elif (event.type == pygame.KEYDOWN
+                    and event.key == pygame.K_d
+                    and ship_selection < len(ship_menuDict)
+                    and not showHiScores):
+                    ship_selection += 1
+                elif (event.type == pygame.QUIT ##menu 화면에서도 esc누르면 꺼지게
+                    or event.type == pygame.KEYDOWN
+                        and event.key == pygame.K_ESCAPE):
+                    return
+            ship_selectPos = ship_selectText.get_rect(topright=ship_menuDict[ship_selection].topleft)
+            textOverlays = zip([ship1Text,ship2Text,ship3Text,ship4Text,ship_selectText],[ship1Pos,ship2Pos,ship3Pos,ship4Pos,ship_selectPos])
+
+         
+
         else:
             textOverlays = zip([startText, hiScoreText, fxText,
-                                musicText, quitText, modeText, selectText, languageText,        ###########
+                                musicText, quitText, modeText, selectText, languageText, change_shipText,        ###########
                                 fxOnText if soundFX else fxOffText,
                                 musicOnText if music else musicOffText],
                                [startPos, hiScorePos, fxPos,
-                                musicPos, quitPos, modePos, selectPos, languagePos,            ###########
+                                musicPos, quitPos, modePos, selectPos, languagePos, change_shipPos,           ###########
                                 fxOnPos if soundFX else fxOffPos,
                                 musicOnPos if music else musicOffPos])
             screen.blit(title, titleRect)

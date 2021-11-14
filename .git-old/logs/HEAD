@@ -1,0 +1,59 @@
+0000000000000000000000000000000000000000 50a23c6c6e483ead339ead0ea8e4e7e6afaeec58 HKLeeeee <dlapdlf1739@gmail.com> 1635400639 +0900	clone: from https://github.com/HKLeeeee/2021-2-OSSProj-BATONG-01.git
+50a23c6c6e483ead339ead0ea8e4e7e6afaeec58 50a23c6c6e483ead339ead0ea8e4e7e6afaeec58 HKLeeeee <dlapdlf1739@gmail.com> 1635401034 +0900	checkout: moving from main to precoding
+50a23c6c6e483ead339ead0ea8e4e7e6afaeec58 0da24910e7057006e0852a42a085c6505d5590e4 HKLeeeee <dlapdlf1739@gmail.com> 1635403605 +0900	commit: 1028_ 주석 추가_이희경
+0da24910e7057006e0852a42a085c6505d5590e4 421dc4d77eb7b9b465109c0657fd7447324cc9d2 HKLeeeee <dlapdlf1739@gmail.com> 1635485093 +0900	pull upstream main: Fast-forward
+421dc4d77eb7b9b465109c0657fd7447324cc9d2 50a23c6c6e483ead339ead0ea8e4e7e6afaeec58 HKLeeeee <dlapdlf1739@gmail.com> 1635487036 +0900	checkout: moving from precoding to main
+50a23c6c6e483ead339ead0ea8e4e7e6afaeec58 421dc4d77eb7b9b465109c0657fd7447324cc9d2 HKLeeeee <dlapdlf1739@gmail.com> 1635487123 +0900	pull upstream main: Fast-forward
+421dc4d77eb7b9b465109c0657fd7447324cc9d2 421dc4d77eb7b9b465109c0657fd7447324cc9d2 HKLeeeee <dlapdlf1739@gmail.com> 1635487237 +0900	checkout: moving from main to language
+421dc4d77eb7b9b465109c0657fd7447324cc9d2 30e5709803b3a0e1db2b7f6baeb2f9f78c331d5b HKLeeeee <dlapdlf1739@gmail.com> 1635487310 +0900	commit: dealing crash
+30e5709803b3a0e1db2b7f6baeb2f9f78c331d5b 421dc4d77eb7b9b465109c0657fd7447324cc9d2 HKLeeeee <dlapdlf1739@gmail.com> 1635488512 +0900	checkout: moving from language to main
+421dc4d77eb7b9b465109c0657fd7447324cc9d2 c02cd76bed82a10a33a0cd2f5252b206421d3559 HKLeeeee <dlapdlf1739@gmail.com> 1635488519 +0900	pull: Fast-forward
+c02cd76bed82a10a33a0cd2f5252b206421d3559 4350872f1801b43600cb376b197b89127e7c8f4b HKLeeeee <dlapdlf1739@gmail.com> 1635488950 +0900	commit: 충돌 테스트1
+4350872f1801b43600cb376b197b89127e7c8f4b 4907c8ce51ae21504ff74f078e08e8e7bdd10ec2 HKLeeeee <dlapdlf1739@gmail.com> 1635489306 +0900	pull: Fast-forward
+4907c8ce51ae21504ff74f078e08e8e7bdd10ec2 2950ba0522e553b0ad011eab3de011737590236f HKLeeeee <dlapdlf1739@gmail.com> 1635489626 +0900	pull upstream main: Fast-forward
+2950ba0522e553b0ad011eab3de011737590236f 910b8061f3d035a14cce669baec083cd6d0d5e5b HKLeeeee <dlapdlf1739@gmail.com> 1635517674 +0900	commit: 주석 추가-희경
+910b8061f3d035a14cce669baec083cd6d0d5e5b 910b8061f3d035a14cce669baec083cd6d0d5e5b HKLeeeee <dlapdlf1739@gmail.com> 1635755513 +0900	checkout: moving from main to language
+910b8061f3d035a14cce669baec083cd6d0d5e5b 910b8061f3d035a14cce669baec083cd6d0d5e5b HKLeeeee <dlapdlf1739@gmail.com> 1635755566 +0900	checkout: moving from language to main
+910b8061f3d035a14cce669baec083cd6d0d5e5b 38ed923088dcff7afb5c086bde15a5557be310e2 HKLeeeee <dlapdlf1739@gmail.com> 1635755937 +0900	commit: language_check == False -> not language_check로 수정
+38ed923088dcff7afb5c086bde15a5557be310e2 931c25e11441ea536d0365eb93b5741cce7938d2 HKLeeeee <dlapdlf1739@gmail.com> 1635756029 +0900	commit: 언어변경 코드 개선
+931c25e11441ea536d0365eb93b5741cce7938d2 910b8061f3d035a14cce669baec083cd6d0d5e5b HKLeeeee <dlapdlf1739@gmail.com> 1635756328 +0900	checkout: moving from main to keep_attack
+910b8061f3d035a14cce669baec083cd6d0d5e5b 30025a7e6d37acae4699a70170a3b965955378be HKLeeeee <dlapdlf1739@gmail.com> 1635757657 +0900	commit: 공격 유지기능 구현 완료
+30025a7e6d37acae4699a70170a3b965955378be 931c25e11441ea536d0365eb93b5741cce7938d2 HKLeeeee <dlapdlf1739@gmail.com> 1635758084 +0900	checkout: moving from keep_attack to main
+931c25e11441ea536d0365eb93b5741cce7938d2 3b73bd0ae0b71992096a9b57a5307bd00470a2ac HKLeeeee <dlapdlf1739@gmail.com> 1635758087 +0900	pull: Fast-forward
+3b73bd0ae0b71992096a9b57a5307bd00470a2ac 3b73bd0ae0b71992096a9b57a5307bd00470a2ac HKLeeeee <dlapdlf1739@gmail.com> 1635939331 +0900	checkout: moving from main to mode
+3b73bd0ae0b71992096a9b57a5307bd00470a2ac 3e7c2793d6533a0ada1ee2cd61615e002f4ed675 HKLeeeee <dlapdlf1739@gmail.com> 1635939381 +0900	pull upstream main: Fast-forward
+3e7c2793d6533a0ada1ee2cd61615e002f4ed675 a5c74e133b8c1de060de009da42ae7fc58a07821 HKLeeeee <dlapdlf1739@gmail.com> 1635940943 +0900	commit: 메뉴화면 구성까지
+a5c74e133b8c1de060de009da42ae7fc58a07821 3b73bd0ae0b71992096a9b57a5307bd00470a2ac HKLeeeee <dlapdlf1739@gmail.com> 1635940961 +0900	checkout: moving from mode to main
+3b73bd0ae0b71992096a9b57a5307bd00470a2ac a5c74e133b8c1de060de009da42ae7fc58a07821 HKLeeeee <dlapdlf1739@gmail.com> 1635940976 +0900	merge mode: Fast-forward
+a5c74e133b8c1de060de009da42ae7fc58a07821 bff2a54d8b7fa8aa2a9b573aa6f0225281fb89e2 HKLeeeee <dlapdlf1739@gmail.com> 1635948456 +0900	commit: 난이도별 구현 했습니다
+bff2a54d8b7fa8aa2a9b573aa6f0225281fb89e2 c1b35459da9335181240b5f7d43b553e58ff0319 HKLeeeee <dlapdlf1739@gmail.com> 1636005784 +0900	pull upstream main: Fast-forward
+c1b35459da9335181240b5f7d43b553e58ff0319 5170af1fd0b76ab70a00877c1f2570712e4697c2 HKLeeeee <dlapdlf1739@gmail.com> 1636008495 +0900	commit: 설정 초기화문제 해결
+5170af1fd0b76ab70a00877c1f2570712e4697c2 8465d69a7dc1898de28aee59ce4a85c36e12491b HKLeeeee <dlapdlf1739@gmail.com> 1636036205 +0900	commit: life 로직 구현
+8465d69a7dc1898de28aee59ce4a85c36e12491b 8465d69a7dc1898de28aee59ce4a85c36e12491b HKLeeeee <dlapdlf1739@gmail.com> 1636137509 +0900	reset: moving to HEAD
+8465d69a7dc1898de28aee59ce4a85c36e12491b 6e0dfcaeafa7d14cdcffbade510276f1d03e7a6c HKLeeeee <dlapdlf1739@gmail.com> 1636137541 +0900	commit: 이미지가 찌그러져서 변경했습니다
+6e0dfcaeafa7d14cdcffbade510276f1d03e7a6c 38051709fbd17d3107c2e421038fcf688aefb90f HKLeeeee <dlapdlf1739@gmail.com> 1636137565 +0900	commit: 남은 목숨 이미지 구현
+38051709fbd17d3107c2e421038fcf688aefb90f 6e0dfcaeafa7d14cdcffbade510276f1d03e7a6c HKLeeeee <dlapdlf1739@gmail.com> 1636137776 +0900	reset: moving to HEAD^
+6e0dfcaeafa7d14cdcffbade510276f1d03e7a6c 8465d69a7dc1898de28aee59ce4a85c36e12491b HKLeeeee <dlapdlf1739@gmail.com> 1636137838 +0900	reset: moving to HEAD^
+8465d69a7dc1898de28aee59ce4a85c36e12491b f675eadf98d4606929f436dbd248327920b82e85 HKLeeeee <dlapdlf1739@gmail.com> 1636137881 +0900	commit: 하트 이미지가 찌그러져서 변경했습니다
+f675eadf98d4606929f436dbd248327920b82e85 af9673600caea246e7cfd9d412513ff87dcb05a4 HKLeeeee <dlapdlf1739@gmail.com> 1636137899 +0900	commit: 주석 추가
+af9673600caea246e7cfd9d412513ff87dcb05a4 68044c9f98d8611501c920aba1baf42064dcc4b8 HKLeeeee <dlapdlf1739@gmail.com> 1636137922 +0900	commit: 남은 목숨 이미지 구현
+68044c9f98d8611501c920aba1baf42064dcc4b8 8a42956c6f4250b4300393cd1c61c43b6431d871 HKLeeeee <dlapdlf1739@gmail.com> 1636137962 +0900	pull: Merge made by the 'recursive' strategy.
+8a42956c6f4250b4300393cd1c61c43b6431d871 59e914dfbdd20836a3f8c7d2e5d03563046b6293 HKLeeeee <dlapdlf1739@gmail.com> 1636138265 +0900	pull: Fast-forward
+59e914dfbdd20836a3f8c7d2e5d03563046b6293 c793eefe2181f0156e5634e363a117f3b709649d HKLeeeee <dlapdlf1739@gmail.com> 1636345321 +0900	pull upstream main: Fast-forward
+c793eefe2181f0156e5634e363a117f3b709649d 59e914dfbdd20836a3f8c7d2e5d03563046b6293 HKLeeeee <dlapdlf1739@gmail.com> 1636476979 +0900	reset: moving to HEAD^
+59e914dfbdd20836a3f8c7d2e5d03563046b6293 4bbfcb31d76de5e01f3a3c49e0fe687bd7f4a677 HKLeeeee <dlapdlf1739@gmail.com> 1636477017 +0900	commit: 여백조절
+4bbfcb31d76de5e01f3a3c49e0fe687bd7f4a677 1a12b48b53700de29fa2fdc3d1e8363dd05e800b HKLeeeee <dlapdlf1739@gmail.com> 1636477043 +0900	commit: 적 절반 아이템 추가 / 아이템 획득시 화면의 적 모두 사라짐
+1a12b48b53700de29fa2fdc3d1e8363dd05e800b 20804e9683e0e91474e74749d49c2ef49153ac85 HKLeeeee <dlapdlf1739@gmail.com> 1636477065 +0900	pull: Merge made by the 'recursive' strategy.
+20804e9683e0e91474e74749d49c2ef49153ac85 4ae79f86e7faaedf551bee9b6b3f3508efe6b627 HKLeeeee <dlapdlf1739@gmail.com> 1636477370 +0900	commit: 여백제거
+4ae79f86e7faaedf551bee9b6b3f3508efe6b627 b8dc7ff891a71849e6d43d5703cd56e946dc26da HKLeeeee <dlapdlf1739@gmail.com> 1636477403 +0900	commit: delete temp
+b8dc7ff891a71849e6d43d5703cd56e946dc26da ed01c9b2b5c58d600533c6834a64707f45d9a41f HKLeeeee <dlapdlf1739@gmail.com> 1636478043 +0900	commit: 오타수정
+ed01c9b2b5c58d600533c6834a64707f45d9a41f a5d0e1db912541a53002735bd0da774878805939 HKLeeeee <dlapdlf1739@gmail.com> 1636478049 +0900	checkout: moving from main to upstream/pr/16
+a5d0e1db912541a53002735bd0da774878805939 ed01c9b2b5c58d600533c6834a64707f45d9a41f HKLeeeee <dlapdlf1739@gmail.com> 1636479347 +0900	checkout: moving from a5d0e1db912541a53002735bd0da774878805939 to main
+ed01c9b2b5c58d600533c6834a64707f45d9a41f a5d0e1db912541a53002735bd0da774878805939 HKLeeeee <dlapdlf1739@gmail.com> 1636541372 +0900	checkout: moving from main to upstream/pr/16
+a5d0e1db912541a53002735bd0da774878805939 ed01c9b2b5c58d600533c6834a64707f45d9a41f HKLeeeee <dlapdlf1739@gmail.com> 1636541911 +0900	checkout: moving from a5d0e1db912541a53002735bd0da774878805939 to main
+ed01c9b2b5c58d600533c6834a64707f45d9a41f 1e08448b2d9d4e9caf6ab0e4abb59c19a6407808 HKLeeeee <dlapdlf1739@gmail.com> 1636545199 +0900	commit: add RESIZABLE tag
+1e08448b2d9d4e9caf6ab0e4abb59c19a6407808 a5d0e1db912541a53002735bd0da774878805939 HKLeeeee <dlapdlf1739@gmail.com> 1636545212 +0900	checkout: moving from main to upstream/pr/16
+a5d0e1db912541a53002735bd0da774878805939 ab1ed8bc1b7caa3627e48d746b03c5b9efc58308 HKLeeeee <dlapdlf1739@gmail.com> 1636547762 +0900	commit: ?
+ab1ed8bc1b7caa3627e48d746b03c5b9efc58308 1e08448b2d9d4e9caf6ab0e4abb59c19a6407808 HKLeeeee <dlapdlf1739@gmail.com> 1636547767 +0900	checkout: moving from ab1ed8bc1b7caa3627e48d746b03c5b9efc58308 to main
+1e08448b2d9d4e9caf6ab0e4abb59c19a6407808 1dbdd33fbb2594792e55cd27fb6538f2c3ce70ea HKLeeeee <dlapdlf1739@gmail.com> 1636654139 +0900	commit: 코인 드롭, 획득까지 구현
+                                                                                                                                                       

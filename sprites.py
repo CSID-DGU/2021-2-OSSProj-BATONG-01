@@ -90,6 +90,24 @@ class Bomb(pygame.sprite.Sprite):
                 and self.rect.center[0] + self.radius >= self.area.right):
             self.kill()
 
+class Coin(MasterSprite):
+    def __init__(self):
+        super().__init__()
+        self.image, self.rect = load_image('coin.png', -1)
+        self.original = self.image
+        screen = pygame.display.get_surface()
+        self.area = screen.get_rect()
+        self.rect.midtop = (random.randint(
+                            self.area.left + self.rect.width // 2,
+                            self.area.right - self.rect.width // 2),
+                            self.area.top)
+    def update(self):
+        center = self.rect.center
+        self.rect = self.image.get_rect(
+            center=(
+                center[0],
+                center[1] +
+                MasterSprite.speed))
 
 class Powerup(MasterSprite):
     ## 아이템 획득
@@ -129,6 +147,11 @@ class ShieldPowerup(Powerup):
         super().__init__('shield')
         self.pType = 'shield'
 
+class HalfPowerup(Powerup):
+    def __init__(self):
+        super().__init__('half')
+        self.pType = 'half'
+        self.image = pygame.transform.scale(self.image, (50,30))
 
 class Ship(MasterSprite):
     def __init__(self):

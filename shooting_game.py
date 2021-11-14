@@ -1,9 +1,8 @@
 import pygame
 import random
 from collections import deque
-###
 
-from pygame.constants import VIDEORESIZE
+from pygame.constants import SCALED, VIDEORESIZE
 from pygame import Surface, draw
 
 
@@ -56,7 +55,6 @@ class Ship_selection_check() : #### 게임 재시작시 변경한 기체이미�
     def get_ship_selection(self) :
         return self.ship_selection
 
-
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -75,7 +73,7 @@ def main():
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
     pygame.init()
-    screen = pygame.display.set_mode((500, 500),pygame.RESIZABLE)
+    screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check = language.get_language()  ######### False면 영어, True면 한국어
@@ -83,7 +81,7 @@ def main():
 
 # Create the background which will scroll and loop over a set of different
 # size stars
-    background = pygame.Surface((500, 2000))
+    background = pygame.Surface((screen.get_width(), screen.get_height()*4))
     background = background.convert()
     background.fill(BLACK)
     backgroundLoc = 1500
@@ -173,7 +171,7 @@ def main():
                       topright=screen.get_rect().inflate(-100, -100).topright)]
 
     title, titleRect = load_image('title.png')
-    titleRect.midtop = screen.get_rect().inflate(0, -200).midtop
+    titleRect.midtop = screen.get_rect().inflate(0, -150).midtop
     waveclear, waveclearRect = load_image('waveclear450.png')  #####wave넘어가는이미지 불러오기######################
     waveclearRect.midtop = screen.get_rect().inflate(0, 0).midtop   ####wave넘어가는이미지 위치설정#########################
     
@@ -334,7 +332,7 @@ def main():
                     if music:
                         pygame.mixer.music.play(loops=-1)
                     else:
-                        pyga제me.mixer.music.stop()
+                        pygame.mixer.music.stop()
                     Database.setSound(int(music), music=True)
                 elif selection == 5 :
                     mode.change_mode()
@@ -474,8 +472,9 @@ def main():
             screen.blit(txt, pos)
         pygame.display.flip()
 
-
-    ######################### 메인 게임 #####################################
+    #############################################################
+    #                         메인 게임                           #
+    #############################################################
     while ship.alive:
         clock.tick(clockTime)
         time += 1
@@ -570,8 +569,6 @@ def main():
                             elif selection == 6:
                                 language.change_language()
                                 language_check = language.get_language()
-                            #################################
-
                         elif (event.type == pygame.KEYDOWN
                               and event.key == pygame.K_w
                               and selection > 1
@@ -626,7 +623,7 @@ def main():
                                           font.render("점수", 1, RED),
                                           font.render("정확도", 1, RED)]
 
-                    for hs in hiScores:  ###########원래 while inMenu밖에 있었는데 안으로 가져옴
+                    for hs in hiScores: 
                         highScoreTexts.extend([font.render(str(hs[x]), 1, BLUE)
                                                for x in range(3)])
                         highScorePos.extend([highScoreTexts[x].get_rect(
@@ -636,11 +633,11 @@ def main():
                         textOverlays = zip(highScoreTexts, highScorePos)
                     else:
                         textOverlays = zip([resumeText, hiScoreText, fxText,
-                                            musicText, quitText, selectText, languageText,  ###########
+                                            musicText, quitText, selectText, languageText,  
                                             fxOnText if soundFX else fxOffText,
                                             musicOnText if music else musicOffText],
                                            [resumePos, hiScorePos, fxPos,
-                                            musicPos, quitPos_pause, selectPos, languagePos_pause,  ###########
+                                            musicPos, quitPos_pause, selectPos, languagePos_pause,  
                                             fxOnPos if soundFX else fxOffPos,
                                             musicOnPos if music else musicOffPos])
                         screen.blit(title, titleRect)

@@ -4,10 +4,10 @@ import random
 from collections import deque
 ###
 
-from pygame import draw
+from pygame import Surface, draw
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
-                     ShieldPowerup, HalfPowerup, Explosion, Siney, Spikey, Fasty,
+                     ShieldPowerup, HalfPowerup, Coin, Explosion, Siney, Spikey, Fasty,
                      Roundy, Crawly)
 from database import Database
 from load import load_image, load_sound, load_music
@@ -16,7 +16,7 @@ if not pygame.mixer:
     print('Warning, sound disabled')
 if not pygame.font:
     print('Warning, fonts disabled')
-
+BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)                               
 YELLOW = (255, 255, 0)
@@ -72,7 +72,7 @@ def main():
 # size stars
     background = pygame.Surface((500, 2000))
     background = background.convert()
-    background.fill((0, 0, 0))
+    background.fill(BLACK)
     backgroundLoc = 1500
     finalStars = deque()
     for y in range(0, 1500, 30):
@@ -100,8 +100,9 @@ def main():
     ship = Ship()
     initialAlienTypes = (Siney, Spikey)
     powerupTypes = (BombPowerup, ShieldPowerup, HalfPowerup)
-    k = 0
+    time = 0
     Missile_on = False
+    Missile_gap = 12
     Mode_Dict = {1:["Easy","쉬움"], 2:["Normal","보통"], 3:["Hard", "어려움"]}
 
     #### Sprite groups
@@ -117,6 +118,7 @@ def main():
     Explosion.active = pygame.sprite.Group()
     bombs = pygame.sprite.Group()
     powerups = pygame.sprite.Group()
+    coins = pygame.sprite.Group()
 
     # Sounds
     missile_sound = load_sound('missile.ogg')
@@ -133,6 +135,9 @@ def main():
     missilesFired = 0
     powerupTime = 10 * clockTime
     powerupTimeLeft = powerupTime
+    coinTime = 5 * clockTime
+    coinTimeLeft = coinTime
+    coin_Have = 0 ################
     betweenWaveTime = 3 * clockTime
     betweenWaveCount = betweenWaveTime
     bombsHeld = 3 #############
@@ -161,8 +166,6 @@ def main():
     
     life_img, life_img_rect = load_image('heart.png',-1)
     life_img = pygame.transform.scale(life_img, (40,40))
-    
-   
     
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
@@ -344,14 +347,21 @@ def main():
     ######################### 메인 게임 #####################################
     while ship.alive:
         clock.tick(clockTime)
-        k += 1
+        time += 1
         #######아이템 드롭#############
-        if aliensLeftThisWave >= 1 :
+        if aliensLeftThisWave >= 1 : 
             powerupTimeLeft -= 1
         if powerupTimeLeft <= 0:
             powerupTimeLeft = powerupTime
             random.choice(powerupTypes)().add(powerups, allsprites)
-
+        #######코인 드롭########
+        if aliensLeftThisWave >= 10 :
+            coinTimeLeft -=1
+        if coinTimeLeft<=0 :
+            coinTimeLeft = coinTime
+            newcoin = Coin()
+            newcoin.add(coins, allsprites)
+        
     # Event Handling
         for event in pygame.event.get():
             if (event.type == pygame.QUIT
@@ -368,7 +378,7 @@ def main():
                 ship.vert -= direction[event.key][1] * speed
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_SPACE):
-                k = 0
+                time = 0
                 Missile_on = True
             elif (event.type == pygame.KEYUP
                   and event.key == pygame.K_SPACE):
@@ -382,11 +392,18 @@ def main():
                     if soundFX:
                         bomb_sound.play()
     ####### 공격 #######
-        if Missile_on == True and k%12 == 0:
+        if Missile_on == True and time%Missile_gap == 0:
             Missile.position(ship.rect.midtop)
             missilesFired += 1
             if soundFX:
                 missile_sound.play()
+
+      # Update Aliens
+        if curTime <= 0 and aliensLeftThisWave > 0:
+            Alien.position()
+            curTime = alienPeriod
+        elif curTime > 0:
+            curTime -= 1
 
     # Collision Detection
         # Aliens
@@ -444,7 +461,7 @@ def main():
                         else :
                             aliensLeftThisWave = 0
 
-        # PowerUps
+        ### 아이템 획득 : PowerUps
         for powerup in powerups:
             if pygame.sprite.collide_circle(powerup, ship):
                 if powerup.pType == 'bomb':
@@ -457,20 +474,23 @@ def main():
                         alien.table()
                     pygame.time.delay(20)
                     if aliensLeftThisWave < num_of_alien :
+                        score += aliensLeftThisWave
                         aliensLeftThisWave = 0
                     else  :
-                        aliensLeftThisWave -= num_of_alien
-                        aliensLeftThisWave = round(aliensLeftThisWave/2)
+                        half_of_alien = round(aliensLeftThisWave/2)
+                        aliensLeftThisWave -= (num_of_alien+half_of_alien)
+                        score += (num_of_alien+half_of_alien)
+                        
                 powerup.kill()
             elif powerup.rect.top > powerup.area.bottom:
                 powerup.kill()
 
-    # Update Aliens
-        if curTime <= 0 and aliensLeftThisWave > 0:
-            Alien.position()
-            curTime = alienPeriod
-        elif curTime > 0:
-            curTime -= 1
+        for coin in coins :
+            if pygame.sprite.collide_circle(coin, ship):
+                coin_Have+=1
+                coin.kill()
+            elif coin.rect.top > coin.area.bottom:
+                coin.kill()
 
     # Update text overlays
         if not language_check :                                           ###############################
@@ -478,21 +498,22 @@ def main():
             leftText = font.render("Aliens Left: " + str(aliensLeftThisWave),1, BLUE)
             scoreText = font.render("Score: " + str(score), 1, BLUE)
             bombText = font.render("Bombs: " + str(bombsHeld), 1, BLUE)
+            coinText = font.render("Coins: "+str(coin_Have), 1, BLUE)
             
         else: 
             waveText = font.render("웨이브: " + str(wave), 1, BLUE)
             leftText = font.render("남은 적: " + str(aliensLeftThisWave), 1, BLUE)
             scoreText = font.render("점수: " + str(score), 1, BLUE)
             bombText = font.render("폭탄: " + str(bombsHeld), 1, BLUE)
-           
+            coinText = font.render("코인: "+str(coin_Have), 1, BLUE)
 
         wavePos = waveText.get_rect(topleft=screen.get_rect().topleft)
         leftPos = leftText.get_rect(midtop=screen.get_rect().midtop)
         scorePos = scoreText.get_rect(topright=screen.get_rect().topright)
         bombPos = bombText.get_rect(bottomleft=screen.get_rect().bottomleft)
-       
-        text = [waveText, leftText, scoreText, bombText]
-        textposition = [wavePos, leftPos, scorePos, bombPos]
+        coinPos = coinText.get_rect(topleft=wavePos.bottomleft)
+        text = [waveText, leftText, scoreText, bombText, coinText]
+        textposition = [wavePos, leftPos, scorePos, bombPos, coinPos]
 
         #####하트 여러 개 그리기 ###
         heart = []
@@ -530,6 +551,8 @@ def main():
             elif betweenWaveCount == 0:
                 if wave % 4 == 0:
                     speed += speed_change
+                    if speed_change > 1 : ##when the mode is hard,
+                        Missile_gap = 6
                     MasterSprite.speed = speed
                     ship.initializeKeys()
                     aliensThisWave = 10
@@ -549,9 +572,6 @@ def main():
         textOverlays = zip(text, textposition)
 
     ################# Update and draw all sprites and text
-        
-       
-        
         screen.blit(
             background, (0, 0), area=pygame.Rect(
                 0, backgroundLoc, 500, 500))

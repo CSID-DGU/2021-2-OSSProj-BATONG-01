@@ -1,0 +1,19 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/HKLeeeee/2021-2-OSSProj-BATONG-01.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[remote "upstream"]
+	url = https://github.com/CSID-DGU/2021-2-OSSProj-BATONG-01.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
+	fetch = +refs/pull/*/head:refs/remotes/upstream/pr/*
+	fetch = +refs/pull/*/head:refs/remotes/upstream/pr/*
+	fetch = +refs/pull/*/head:refs/remotes/upstream/pr/*
+	fetch = +refs/pull/*/head:refs/remotes/upstream/pr/*
+	fetch = +refs/pull/*/head:refs/remotes/upstream/pr/*

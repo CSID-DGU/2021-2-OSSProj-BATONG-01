@@ -392,11 +392,7 @@ def main():
                     if soundFX:
                         bomb_sound.play()
     ####### 공격 #######
-<<<<<<< HEAD
         if Missile_on == True and time%Missile_gap == 0:
-=======
-        if Missile_on == True and time%12 == 0:
->>>>>>> ab47531ea04d6af964a21b9a90aa532bfec2447e
             Missile.position(ship.rect.midtop)
             missilesFired += 1
             if soundFX:
@@ -495,16 +491,6 @@ def main():
                 coin.kill()
             elif coin.rect.top > coin.area.bottom:
                 coin.kill()
-<<<<<<< HEAD
-=======
-
-    # Update Aliens
-        if curTime <= 0 and aliensLeftThisWave > 0:
-            Alien.position()
-            curTime = alienPeriod
-        elif curTime > 0:
-            curTime -= 1
->>>>>>> ab47531ea04d6af964a21b9a90aa532bfec2447e
 
     # Update text overlays
         if not language_check :                                           ###############################

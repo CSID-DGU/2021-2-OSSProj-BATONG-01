@@ -164,7 +164,7 @@ def main():
    
     
     startText = font.render('START GAME', 1, BLUE)
-    resumeText = font.render('RESUME', 1, BLUE) # 일시정지 메뉴 text
+    resumeText = font.render('START GAME', 1, BLUE) # 일시정지 메뉴 text
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
     fxText = font.render('SOUND FX ', 1, GREEN)
     fxOnText = font.render('ON', 1, RED)
@@ -189,9 +189,12 @@ def main():
     musicOffPos = musicOffText.get_rect(topleft=musicPos.topright)
     modePos = modeText.get_rect(topleft=musicPos.bottomleft) ############
     quitPos = quitText.get_rect(topleft=modePos.bottomleft)
+    quitPos_pause = modeText.get_rect(topleft=musicPos.bottomleft) # 일시정지 메뉴 quitPos
     selectPos = selectText.get_rect(topright=startPos.topleft)
+    selectPos_pause = selectText.get_rect(topright=resumePos.topleft) #일시정지 메뉴 selectPos
     languagePos = languageText.get_rect(topleft=quitPos.bottomleft)  ###############################
-    
+    languagePos_pause = languageText.get_rect(topleft=quitPos_pause.bottomleft) # 일시정지 메뉴 languagePos
+
     menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6 :quitPos, 7:languagePos}    ####################
     
 
@@ -235,7 +238,7 @@ def main():
                     if music:
                         pygame.mixer.music.play(loops=-1)
                     else:
-                        pygame.mixer.music.stop()
+                        pyga제me.mixer.music.stop()
                     Database.setSound(int(music), music=True)
                 elif selection == 5 :
                     mode.change_mode()
@@ -384,12 +387,12 @@ def main():
                         bomb_sound.play()
 
             ####### 일시정지 #######
-            #현재 RESUME GAME 메뉴 글자가 밀리는 오류가 있음
+            # 현재 RESUME GAME 메뉴 글자가 밀리는 오류가 있음
             elif (event.type == pygame.KEYDOWN
                     and event.key == pygame.K_p):
                 pauseMenu = True
-                menuDict = {1: resumePos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6: quitPos,
-                            7: languagePos}
+                menuDict = {1: resumePos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos_pause,
+                            6: languagePos_pause}
 
                 while pauseMenu:
                     clock.tick(clockTime)
@@ -428,13 +431,12 @@ def main():
                                     pygame.mixer.music.stop()
                                 Database.setSound(int(music), music=True)
                             elif selection == 5:
-                                mode.change_mode()
-                                select_mode = mode.get_mode()
-                            elif selection == 6:
                                 return
-                            elif selection == 7:  #################################
+                            elif selection == 6:
                                 language.change_language()
                                 language_check = language.get_language()
+                            #################################
+
                         elif (event.type == pygame.KEYDOWN
                               and event.key == pygame.K_w
                               and selection > 1
@@ -451,25 +453,6 @@ def main():
                             return
 
                     selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
-                    #####mode select######
-                    if mode.get_mode() == 1:
-                        speed = 1
-                        bombsHeld = 5
-                        speed_change = 0.2
-                        aliens_change = 1.5
-                        life = 5
-                    elif mode.get_mode() == 2:
-                        speed = 1.5
-                        bombsHeld = 3
-                        speed_change = 0.5
-                        aliens_change = 2
-                        life = 3
-                    elif mode.get_mode() == 3:
-                        bombsHeld = 1
-                        speed = 1.7
-                        speed_change = 1
-                        aliens_change = 3
-                        life = 1
 
                     if not language_check:  #################################################
                         resumeText = font.render('RESUME GAME', 1, BLUE)
@@ -518,11 +501,11 @@ def main():
                         textOverlays = zip(highScoreTexts, highScorePos)
                     else:
                         textOverlays = zip([resumeText, hiScoreText, fxText,
-                                            musicText, quitText, modeText, selectText, languageText,  ###########
+                                            musicText, quitText, selectText, languageText,  ###########
                                             fxOnText if soundFX else fxOffText,
                                             musicOnText if music else musicOffText],
                                            [resumePos, hiScorePos, fxPos,
-                                            musicPos, quitPos, modePos, selectPos, languagePos,  ###########
+                                            musicPos, quitPos_pause, selectPos, languagePos_pause,  ###########
                                             fxOnPos if soundFX else fxOffPos,
                                             musicOnPos if music else musicOffPos])
                         screen.blit(title, titleRect)

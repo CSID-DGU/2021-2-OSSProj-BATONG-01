@@ -4,7 +4,9 @@ import random
 from collections import deque
 ###
 
+from pygame.constants import VIDEORESIZE
 from pygame import Surface, draw
+
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, HalfPowerup, Coin, Explosion, Siney, Spikey, Fasty,
@@ -45,6 +47,17 @@ class Mode_check() : #### 게임 재시작시 모드 선택 유지
     def get_mode(self) :
         return self.mode
 
+class Ship_selection_check() : #### 게임 재시작시 변경한 기체이미지 유지
+    def __init__(self):
+        self.ship_selection = 1
+    def ship_selection_plus(self):
+        self.ship_selection += 1
+    def ship_selection_minus(self):
+        self.ship_selection -= 1
+    def get_ship_selection(self) :
+        return self.ship_selection
+
+
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -56,13 +69,14 @@ class Keyboard(object):
 
 language = Language_check()
 mode = Mode_check()
+ship_selection = Ship_selection_check() ###############
 
 ###############  MAIN ###############################################
 def main():
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
     pygame.init()
-    screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((500, 500),pygame.RESIZABLE)
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check = language.get_language()  ######### False면 영어, True면 한국어
@@ -167,6 +181,31 @@ def main():
     life_img, life_img_rect = load_image('heart.png',-1)
     life_img = pygame.transform.scale(life_img, (40,40))
     
+    ship1, ship1Rect = load_image('ship.png')
+    ship1Rect.bottomleft = screen.get_rect().inflate(-112, -300).bottomleft
+    ship2, ship2Rect = load_image('ship2.png')
+    ship2Rect.bottomleft = screen.get_rect().inflate(-337, -300).bottomleft 
+    ship3, ship3Rect = load_image('ship3.png')
+    ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft 
+    ship4, ship4Rect = load_image('ship4.png')
+    ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft 
+
+
+    #####기체이미지 변경 변수들###########
+    ship1Text = font.render('', 1, BLUE)
+    ship2Text = font.render('', 1, BLUE)
+    ship3Text = font.render('', 1, BLUE)
+    ship4Text = font.render('', 1, BLUE)
+    ship_selectText = font.render('SELECT', 1, BLUE)
+
+    ship1Pos = ship1Text.get_rect(midbottom=ship1Rect.inflate(0, 0).midbottom)
+    ship2Pos = ship2Text.get_rect(midbottom=ship2Rect.inflate(0, 0).midbottom)
+    ship3Pos = ship3Text.get_rect(midbottom=ship3Rect.inflate(0, 0).midbottom)
+    ship4Pos = ship4Text.get_rect(midbottom=ship4Rect.inflate(0, 0).midbottom)
+    ship_selectPos = ship_selectText.get_rect(midbottom=ship1Rect.inflate(0, 60).midbottom)
+    
+    ship_menuDict = {1: ship1Pos, 2: ship2Pos, 3: ship3Pos, 4: ship4Pos}
+
     startText = font.render('START GAME', 1, BLUE)
     hiScoreText = font.render('HIGH SCORES', 1, BLUE)
     fxText = font.render('SOUND FX ', 1, GREEN)
@@ -179,10 +218,10 @@ def main():
     selectText = font.render('*', 1, BLUE)
     languageText = font.render('언어변경', 1, BLUE)                             ###########################
     modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+    change_shipText = font.render('CHANGE SHIP', 1, BLUE) 
 
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 50).midbottom)
     hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
-
     fxPos = fxText.get_rect(topleft=hiScorePos.bottomleft)
     fxOnPos = fxOnText.get_rect(topleft=fxPos.topright)
     fxOffPos = fxOffText.get_rect(topleft=fxPos.topright)
@@ -193,12 +232,14 @@ def main():
     quitPos = quitText.get_rect(topleft=modePos.bottomleft)
     selectPos = selectText.get_rect(topright=startPos.topleft)
     languagePos = languageText.get_rect(topleft=quitPos.bottomleft)  ###############################
-    
-    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6 :quitPos, 7:languagePos}    ####################
+    change_shipPos = change_shipText.get_rect(topleft=languagePos.bottomleft)
+
+    menuDict = {1: startPos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: modePos, 6 :quitPos, 7:languagePos, 8:change_shipPos}    ####################
     
 
     selection = 1
     showHiScores = False
+    showChange_ship = False
     soundFX = Database.getSound()
     music = Database.getSound(music=True)
     if music and pygame.mixer:
@@ -216,15 +257,68 @@ def main():
             backgroundLoc = 1500
 
         for event in pygame.event.get():
+            
             if (event.type == pygame.QUIT):
                 return
             elif (event.type == pygame.KEYDOWN
-                  and event.key == pygame.K_RETURN):
+                  and event.key == pygame.K_RETURN and not showChange_ship):
                 if showHiScores:
                     showHiScores = False
                 elif selection == 1:
                     inMenu = False
                     ship.initializeKeys()
+                    if ship_selection.get_ship_selection() == 1:      #####게임 시작시 설정한 기체이미지에 맞게 변경####
+                        ship.image, ship.rect = load_image('ship.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
+                    elif ship_selection.get_ship_selection() == 2:
+                        ship.image, ship.rect = load_image('ship2.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship2_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
+                    elif ship_selection.get_ship_selection() == 3:
+                        ship.image, ship.rect = load_image('ship3.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship3_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
+                    elif ship_selection.get_ship_selection() == 4:
+                        ship.image, ship.rect = load_image('ship4.png', -1)
+                        ship.original = ship.image
+                        ship.shield, ship.rect = load_image('ship4_shield.png', -1)
+                        ship.screen = pygame.display.get_surface()
+                        ship.area = ship.screen.get_rect()
+                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                        ship.radius = max(ship.rect.width, ship.rect.height)
+                        ship.alive = True  ##### life
+                        ship.shieldUp = False
+                        ship.vert = 0
+                        ship.horiz = 0
+                        showChange_ship = False
                 elif selection == 2:
                     showHiScores = True
                 elif selection == 3:
@@ -247,22 +341,45 @@ def main():
                 elif selection == 7:                                     #################################
                     language.change_language()
                     language_check = language.get_language()
+                elif selection == 8:
+                    showChange_ship = True
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_w
                   and selection > 1
-                  and not showHiScores):
+                  and not showHiScores
+                  and not showChange_ship):
                 selection -= 1
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_s
                   and selection < len(menuDict)
-                  and not showHiScores):
+                  and not showHiScores
+                  and not showChange_ship):
                 selection += 1
             elif (event.type == pygame.QUIT ##menu 화면에서도 esc누르면 꺼지게
                 or event.type == pygame.KEYDOWN
-                    and event.key == pygame.K_ESCAPE):
+                and event.key == pygame.K_ESCAPE):
                 return
 
+            ####기체이미지 변경 창########
+            elif (event.type == pygame.KEYDOWN
+                and event.key == pygame.K_RETURN and showChange_ship):
+                showChange_ship = False
+            elif (event.type == pygame.KEYDOWN
+                and event.key == pygame.K_a
+                and ship_selection.get_ship_selection() > 1
+                and not showHiScores
+                and showChange_ship):
+                ship_selection.ship_selection_minus()
+            elif (event.type == pygame.KEYDOWN
+                and event.key == pygame.K_d
+                and ship_selection.get_ship_selection() < len(ship_menuDict)
+                and not showHiScores
+                and showChange_ship):
+                ship_selection.ship_selection_plus()
+            
+        ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
+        
         #####mode select######
         if mode.get_mode() == 1 :
             speed = 1
@@ -296,6 +413,8 @@ def main():
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('언어변경', 1, BLUE)
             modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+            change_shipText = font.render('CHANGE SHIP', 1, BLUE)
+            ship_selectText = font.render('SELECT', 1, BLUE)
         else:
             startText = font.render('게임 시작', 1, BLUE)
             hiScoreText = font.render('최고 기록', 1, BLUE)
@@ -309,6 +428,8 @@ def main():
             selectText = font.render('*', 1, BLUE)
             languageText = font.render('LANGUAGE CHANGE', 1, BLUE)
             modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
+            change_shipText = font.render('기체 변경', 1, BLUE)
+            ship_selectText = font.render('선택', 1, BLUE)
 
         ###################### 점수 화면 ######################
         if not language_check :                 #################################################
@@ -325,16 +446,23 @@ def main():
                                    for x in range(3)])
             highScorePos.extend([highScoreTexts[x].get_rect(
                 topleft=highScorePos[x].bottomleft) for x in range(-3, 0)])
-            
+
         if showHiScores:
             textOverlays = zip(highScoreTexts, highScorePos)
+        elif showChange_ship:
+            screen.blit(title,titleRect)
+            screen.blit(ship1, ship1Rect)
+            screen.blit(ship2, ship2Rect)
+            screen.blit(ship3, ship3Rect)
+            screen.blit(ship4, ship4Rect)
+            textOverlays = zip([ship1Text,ship2Text,ship3Text,ship4Text,ship_selectText],[ship1Pos,ship2Pos,ship3Pos,ship4Pos,ship_selectPos])
         else:
             textOverlays = zip([startText, hiScoreText, fxText,
-                                musicText, quitText, modeText, selectText, languageText,        ###########
+                                musicText, quitText, modeText, selectText, languageText, change_shipText,        ###########
                                 fxOnText if soundFX else fxOffText,
                                 musicOnText if music else musicOffText],
                                [startPos, hiScorePos, fxPos,
-                                musicPos, quitPos, modePos, selectPos, languagePos,            ###########
+                                musicPos, quitPos, modePos, selectPos, languagePos, change_shipPos,           ###########
                                 fxOnPos if soundFX else fxOffPos,
                                 musicOnPos if music else musicOffPos])
             screen.blit(title, titleRect)
@@ -348,6 +476,7 @@ def main():
     while ship.alive:
         clock.tick(clockTime)
         time += 1
+        
         #######아이템 드롭#############
         if aliensLeftThisWave >= 1 : 
             powerupTimeLeft -= 1
@@ -491,6 +620,10 @@ def main():
                 coin.kill()
             elif coin.rect.top > coin.area.bottom:
                 coin.kill()
+<<<<<<< HEAD
+=======
+
+>>>>>>> 26c077cf5d16edf63e16022f930f11d3b3279f3f
 
     # Update text overlays
         if not language_check :                                           ###############################
@@ -523,6 +656,9 @@ def main():
             heartPos.append([screen.get_width()-life_img.get_width()*i, scoreText.get_height()])
 
     ###################### 다음 wave : Detertmine when to move to next wave ########################
+    
+        
+    
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1

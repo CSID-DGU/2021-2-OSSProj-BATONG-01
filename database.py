@@ -10,7 +10,7 @@ class Database(object):
     numScores = 15
 
     @staticmethod
-    def getSound(music=False):
+    def getSound(music=False): # 사운드를 데이터베이스에서 불러오는 함수
         conn = sqlite3.connect(Database.path)
         c = conn.cursor()
         if music:
@@ -24,7 +24,7 @@ class Database(object):
         return bool(setting[0][0]) if len(setting) > 0 else False
 
     @staticmethod
-    def setSound(setting, music=False):
+    def setSound(setting, music=False): # 사운드를 설정하는 함수
         conn = sqlite3.connect(Database.path)
         c = conn.cursor()
         if music:
@@ -37,7 +37,7 @@ class Database(object):
         conn.close()
 
     @staticmethod
-    def getScores():
+    def getScores(): # 점수를 데이터베이스에서 불러오는 함수
         conn = sqlite3.connect(Database.path)
         c = conn.cursor()
         c.execute('''CREATE TABLE if not exists scores
@@ -48,7 +48,7 @@ class Database(object):
         return hiScores
 
     @staticmethod
-    def setScore(hiScores, entry):
+    def setScore(hiScores, entry): # 점수를 데이터베이스에 저장하는 함수
         conn = sqlite3.connect(Database.path)
         c = conn.cursor()
         if len(hiScores) == Database.numScores:

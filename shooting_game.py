@@ -180,7 +180,7 @@ def main():
     
     life_img, life_img_rect = load_image('heart.png',-1)
     life_img = pygame.transform.scale(life_img, (40,40))
-    
+
     ship1, ship1Rect = load_image('ship.png')
     ship1Rect.bottomleft = screen.get_rect().inflate(-112, -300).bottomleft
     ship2, ship2Rect = load_image('ship2.png')
@@ -218,7 +218,7 @@ def main():
     selectText = font.render('*', 1, BLUE)
     languageText = font.render('언어변경', 1, BLUE)                             ###########################
     modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
-    change_shipText = font.render('CHANGE SHIP', 1, BLUE) 
+    change_shipText = font.render('CHANGE SHIP', 1, BLUE)
 
     startPos = startText.get_rect(midtop=titleRect.inflate(0, 50).midbottom)
     hiScorePos = hiScoreText.get_rect(topleft=startPos.bottomleft)
@@ -257,7 +257,7 @@ def main():
             backgroundLoc = 1500
 
         for event in pygame.event.get():
-            
+
             if (event.type == pygame.QUIT):
                 return
             elif (event.type == pygame.KEYDOWN
@@ -357,10 +357,10 @@ def main():
                 selection += 1
             elif (event.type == pygame.QUIT ##menu 화면에서도 esc누르면 꺼지게
                 or event.type == pygame.KEYDOWN
-                and event.key == pygame.K_ESCAPE):
+                    and event.key == pygame.K_ESCAPE):
                 return
 
-            ####기체이미지 변경 창########
+     ####기체이미지 변경 창########
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_RETURN and showChange_ship):
                 showChange_ship = False
@@ -379,7 +379,7 @@ def main():
             
         ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
-        
+    
         #####mode select######
         if mode.get_mode() == 1 :
             speed = 1
@@ -446,7 +446,7 @@ def main():
                                    for x in range(3)])
             highScorePos.extend([highScoreTexts[x].get_rect(
                 topleft=highScorePos[x].bottomleft) for x in range(-3, 0)])
-
+            
         if showHiScores:
             textOverlays = zip(highScoreTexts, highScorePos)
         elif showChange_ship:
@@ -476,7 +476,7 @@ def main():
     while ship.alive:
         clock.tick(clockTime)
         time += 1
-        
+
         #######아이템 드롭#############
         if aliensLeftThisWave >= 1 : 
             powerupTimeLeft -= 1
@@ -620,10 +620,6 @@ def main():
                 coin.kill()
             elif coin.rect.top > coin.area.bottom:
                 coin.kill()
-<<<<<<< HEAD
-=======
-
->>>>>>> 26c077cf5d16edf63e16022f930f11d3b3279f3f
 
     # Update text overlays
         if not language_check :                                           ###############################
@@ -656,9 +652,9 @@ def main():
             heartPos.append([screen.get_width()-life_img.get_width()*i, scoreText.get_height()])
 
     ###################### 다음 wave : Detertmine when to move to next wave ########################
-    
-        
-    
+
+
+
         if aliensLeftThisWave <= 0:
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1

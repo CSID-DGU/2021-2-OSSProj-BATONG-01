@@ -4,6 +4,7 @@ from collections import deque
 
 from pygame.constants import SCALED, VIDEORESIZE
 from pygame import Surface, draw
+from pygame.display import update
 
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
@@ -73,31 +74,54 @@ def main():
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
     pygame.init()
-    screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((500, 500), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check = language.get_language()  ######### False면 영어, True면 한국어
     select_mode = mode.get_mode() ###1: easy, 2: normal, 3: hard ### default : normal
-
+    scr_size = [screen.get_width(), screen.get_height()]
+    min_size = 500
+    board_rate = 1
 # Create the background which will scroll and loop over a set of different
 # size stars
-    background = pygame.Surface((screen.get_width(), screen.get_height()*4))
+    background = pygame.Surface((scr_size[0], scr_size[1]*4))
     background = background.convert()
     background.fill(BLACK)
-    backgroundLoc = 1500
+    backgroundLoc = scr_size[1]*3
     finalStars = deque()
-    for y in range(0, 1500, 30):
-        size = random.randint(2, 5)
-        x = random.randint(0, 500 - size)
-        if y <= 500:
-            finalStars.appendleft((x, y + 1500, size))
+    for y in range(0, scr_size[1]*3, 30):
+        star_size = random.randint(2, 5)
+        x = random.randint(0, scr_size[0] - star_size)
+        if y <= scr_size[1]:
+            finalStars.appendleft((x, y + scr_size[1]*3, star_size))
         pygame.draw.rect(
-            background, (255, 255, 0), pygame.Rect(x, y, size, size))
+            background, YELLOW, pygame.Rect(x, y, star_size, star_size))
     while finalStars:
-        x, y, size = finalStars.pop()
+        x, y, star_size = finalStars.pop()
         pygame.draw.rect(
-            background, (255, 255, 0), pygame.Rect(x, y, size, size))
+            background, YELLOW, pygame.Rect(x, y, star_size, star_size))
 
+#update background
+    def update_background(SCREEN_WIDTH, SCREEN_HEIGHT) :
+        #size stars
+        background = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT*4))
+        background = background.convert()
+        background.fill((100,100,100))
+        backgroundLoc = SCREEN_HEIGHT*3
+        finalStars = deque()
+        for y in range(0, SCREEN_HEIGHT*3, 30):
+            star_size = random.randint(2, 5)
+            x = random.randint(0, SCREEN_WIDTH - star_size)
+            if y <= scr_size[1]:
+                finalStars.appendleft((x, y + SCREEN_HEIGHT*3, star_size))
+            pygame.draw.rect(
+                background, YELLOW, pygame.Rect(x, y, star_size, star_size))
+        while finalStars:
+            x, y, star_size = finalStars.pop()
+            pygame.draw.rect(
+                background, YELLOW, pygame.Rect(x, y, star_size, star_size))
+        ship.update_screen()
+        
 # Display the background
     screen.blit(background, (0, 0))
     pygame.display.flip()
@@ -249,13 +273,12 @@ def main():
     ################################# 메뉴 화면 #########################################
     while inMenu:
         clock.tick(clockTime)
-
         screen.blit(
             background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
+                0, backgroundLoc, scr_size[0], scr_size[1]))
         backgroundLoc -= speed
         if backgroundLoc - speed <= speed:
-            backgroundLoc = 1500
+            backgroundLoc = scr_size[1]*3
 
         for event in pygame.event.get():
 
@@ -359,8 +382,7 @@ def main():
             elif (event.type == pygame.QUIT ##menu 화면에서도 esc누르면 꺼지게
                 or event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
-                return
-
+                return      
      ####기체이미지 변경 창########
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_RETURN and showChange_ship):
@@ -377,7 +399,18 @@ def main():
                 and not showHiScores
                 and showChange_ship):
                 ship_selection.ship_selection_plus()
-            
+            elif (event.type == VIDEORESIZE) :
+                scr_size[0] = event.w
+                scr_size[1] = event.h
+                SCREEN_WIDTH = scr_size[0]
+                SCREEN_HEIGHT = scr_size[1]
+                if SCREEN_WIDTH < min_size or SCREEN_HEIGHT < min_size:  # 최소 너비 또는 높이를 설정하려는 경우
+                    SCREEN_WIDTH = min_size
+                    SCREEN_HEIGHT = min_size
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
+                update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                pygame.display.update()
+
         ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
     
@@ -522,6 +555,17 @@ def main():
                     newBomb.add(bombs, alldrawings)
                     if soundFX:
                         bomb_sound.play()
+            elif (event.type == VIDEORESIZE) :
+                scr_size[0] = event.w
+                scr_size[1] = event.h
+                SCREEN_WIDTH = scr_size[0]
+                SCREEN_HEIGHT = scr_size[1]
+                if SCREEN_WIDTH < min_size or SCREEN_HEIGHT < min_size:  # 최소 너비 또는 높이를 설정하려는 경우
+                    SCREEN_WIDTH = min_size
+                    SCREEN_HEIGHT = min_size
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                pygame.display.update()
             elif (event.type == pygame.KEYDOWN
                     and event.key == pygame.K_p): ####### 일시정지 ######
                 pauseMenu = True
@@ -530,13 +574,13 @@ def main():
 
                 while pauseMenu:
                     clock.tick(clockTime)
-
+        
                     screen.blit(
                         background, (0, 0), area=pygame.Rect(
-                            0, backgroundLoc, 500, 500))
+                            0, backgroundLoc, scr_size[0], scr_size[1]))
                     backgroundLoc -= speed
                     if backgroundLoc - speed <= speed:
-                        backgroundLoc = 1500
+                        backgroundLoc = scr_size[1]*3
 
                     for event in pygame.event.get():
                         if (event.type == pygame.QUIT):
@@ -583,7 +627,17 @@ def main():
                               or event.type == pygame.KEYDOWN
                               and event.key == pygame.K_ESCAPE):
                             return
-
+                        elif (event.type == VIDEORESIZE) :
+                            scr_size[0] = event.w
+                            scr_size[1] = event.h
+                            SCREEN_WIDTH = scr_size[0]
+                            SCREEN_HEIGHT = scr_size[1]
+                            if SCREEN_WIDTH < min_size or SCREEN_HEIGHT < min_size:  # 최소 너비 또는 높이를 설정하려는 경우
+                                SCREEN_WIDTH = min_size
+                                SCREEN_HEIGHT = min_size
+                            screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                            update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                            pygame.display.update()
                     selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
 
                     if not language_check:  #################################################
@@ -831,10 +885,10 @@ def main():
     ################# Update and draw all sprites and text
         screen.blit(
             background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
+                0, backgroundLoc, scr_size[0], scr_size[1]))
         backgroundLoc -= speed
         if backgroundLoc - speed <= speed:
-            backgroundLoc = 1500
+            backgroundLoc = scr_size[1]*3
         allsprites.update()
         allsprites.draw(screen)
         alldrawings.update()
@@ -881,6 +935,17 @@ def main():
                   and len(name) > 0):
                 Database.setScore(hiScores, (name, score, accuracy))
                 return True
+            elif (event.type == VIDEORESIZE) :
+                scr_size[0] = event.w
+                scr_size[1] = event.h
+                SCREEN_WIDTH = scr_size[0]
+                SCREEN_HEIGHT = scr_size[1]
+                if SCREEN_WIDTH < min_size or SCREEN_HEIGHT < min_size:  # 최소 너비 또는 높이를 설정하려는 경우
+                    SCREEN_WIDTH = min_size
+                    SCREEN_HEIGHT = min_size
+                screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+                update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                pygame.display.update()
 
         if isHiScore:
             if not language_check:                                     #################################
@@ -920,10 +985,10 @@ def main():
     ############################### Update and draw all sprites ############################################
         screen.blit(
             background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
+                0, backgroundLoc, scr_size[0], scr_size[1]))
         backgroundLoc -= speed
         if backgroundLoc - speed <= 0:
-            backgroundLoc = 1500
+            backgroundLoc = scr_size[1]*3
         allsprites.update()
         allsprites.draw(screen)
         alldrawings.update()

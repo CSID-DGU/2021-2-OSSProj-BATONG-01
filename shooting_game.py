@@ -121,7 +121,8 @@ def main():
             pygame.draw.rect(
                 background, YELLOW, pygame.Rect(x, y, star_size, star_size))
         ship.update_screen()
-        
+        return screen, background, backgroundLoc
+
 # Display the background
     screen.blit(background, (0, 0))
     pygame.display.flip()
@@ -409,7 +410,8 @@ def main():
                     SCREEN_HEIGHT = min_size
                 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
                 update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
-                pygame.display.update()
+                screen.blit(background, (0, 0))
+                pygame.display.flip()
 
         ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
@@ -564,8 +566,9 @@ def main():
                     SCREEN_WIDTH = min_size
                     SCREEN_HEIGHT = min_size
                 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
-                update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
-                pygame.display.update()
+                screen, backgound, backgroundLoc = update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                screen.blit(background, (0, 0))
+                pygame.display.flip()
             elif (event.type == pygame.KEYDOWN
                     and event.key == pygame.K_p): ####### 일시정지 ######
                 pauseMenu = True
@@ -636,8 +639,9 @@ def main():
                                 SCREEN_WIDTH = min_size
                                 SCREEN_HEIGHT = min_size
                             screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
-                            update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
-                            pygame.display.update()
+                            screen, backgound, backgroundLoc = update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                            screen.blit(background, (0, 0))
+                            pygame.display.flip()
                     selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
 
                     if not language_check:  #################################################
@@ -944,8 +948,9 @@ def main():
                     SCREEN_WIDTH = min_size
                     SCREEN_HEIGHT = min_size
                 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
-                update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
-                pygame.display.update()
+                screen, backgound, backgroundLoc = update_background(SCREEN_WIDTH, SCREEN_HEIGHT)
+                screen.blit(background, (0, 0))
+                pygame.display.flip()
 
         if isHiScore:
             if not language_check:                                     #################################

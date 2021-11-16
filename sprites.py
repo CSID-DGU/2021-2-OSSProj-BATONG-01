@@ -255,10 +255,6 @@ class Alien(MasterSprite):
             Alien.numOffScreen -= 1
 
     def update(self):
-        self.screen = pygame.display.get_surface()
-        self.area = self.screen.get_rect()
-        self.loc = 0
-        self.radius = min(self.rect.width // 2, self.rect.height // 2)
         horiz, vert = self.moveFunc()
         if horiz + self.initialRect.x > self.screen.get_width():
             horiz -= self.screen.get_width() + self.rect.width

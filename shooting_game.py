@@ -10,6 +10,7 @@ from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, HalfPowerup, Coin, Explosion, Siney, Spikey, Fasty,
                      Roundy, Crawly)
 from database import Database
+from coin import CoinData
 from load import load_image, load_sound, load_music
 
 if not pygame.mixer:
@@ -148,7 +149,7 @@ def main():
     powerupTimeLeft = powerupTime
     coinTime = 5 * clockTime
     coinTimeLeft = coinTime
-    coin_Have = 0 ################
+    coin_Have = CoinData.load() ################
     betweenWaveTime = 3 * clockTime
     betweenWaveCount = betweenWaveTime
     bombsHeld = 3 #############
@@ -856,6 +857,7 @@ def main():
         clock.tick(clockTime)
 
     # Event Handling
+        CoinData.setCoins(coin_Have) ##정상적으로 게임을 끝마쳤을때만 코인개수 저장
         for event in pygame.event.get():
             if (event.type == pygame.QUIT
                 or not isHiScore

@@ -11,6 +11,7 @@ from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, HalfPowerup, Coin, Explosion, Siney, Spikey, Fasty,
                      Roundy, Crawly)
 from database import Database
+from coin import CoinData
 from load import load_image, load_sound, load_music
 
 if not pygame.mixer:

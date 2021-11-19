@@ -56,6 +56,30 @@ class Ship_selection_check() : #### 게임 재시작시 변경한 기체이미�
     def get_ship_selection(self) :
         return self.ship_selection
 
+class Ship2_check() :
+    def __init__(self):
+        self.isShip2unlock = False
+    def ship2unlock(self):
+        self.isShip2unlock = True
+    def get_isShip2unlock(self) :
+        return self.isShip2unlock
+
+class Ship3_check() :
+    def __init__(self):
+        self.isShip3unlock = False
+    def ship3unlock(self):
+        self.isShip3unlock = True
+    def get_isShip3unlock(self) :
+        return self.isShip3unlock
+
+class Ship4_check() :
+    def __init__(self):
+        self.isShip4unlock = False
+    def ship4unlock(self):
+        self.isShip4unlock = True
+    def get_isShip4unlock(self) :
+        return self.isShip4unlock
+
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -67,7 +91,10 @@ class Keyboard(object):
 
 language = Language_check()
 mode = Mode_check()
-ship_selection = Ship_selection_check() ###############
+ship_selection = Ship_selection_check() 
+ship2_check = Ship2_check()
+ship3_check = Ship3_check()
+ship4_check = Ship4_check()
 
 ###############  MAIN ###############################################
 def main():
@@ -179,15 +206,24 @@ def main():
     life_img, life_img_rect = load_image('heart.png',-1)
     life_img = pygame.transform.scale(life_img, (40,40))
 
+    #기체 변경창
     ship1, ship1Rect = load_image('ship.png')
     ship1Rect.bottomleft = screen.get_rect().inflate(-112, -300).bottomleft
-    ship2, ship2Rect = load_image('ship2.png')
-    ship2Rect.bottomleft = screen.get_rect().inflate(-337, -300).bottomleft 
-    ship3, ship3Rect = load_image('ship3.png')
+
+    if ship2_check.get_isShip2unlock() : ship2, ship2Rect = load_image('ship2.png')
+    else : ship2, ship2Rect = load_image('ship2_lock.png')
+    ship2Rect.bottomleft = screen.get_rect().inflate(-337, -290).bottomleft 
+
+    if ship3_check.get_isShip3unlock() : ship3, ship3Rect = load_image('ship3.png')
+    else : ship3, ship3Rect = load_image('ship3_lock.png')
     ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft 
-    ship4, ship4Rect = load_image('ship4.png')
+
+    if ship4_check.get_isShip4unlock() : ship4, ship4Rect = load_image('ship4.png')
+    else : ship4, ship4Rect = load_image('ship4_lock.png')
     ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft 
 
+    shipCoin, shipCoinRect = load_image('coin.png')      #기체변경 창에서 코인 이미지
+    shipCoinRect.bottomleft = screen.get_rect().inflate(-112, -100).bottomleft 
 
     #####기체이미지 변경 변수들###########
     ship1Text = font.render('', 1, BLUE)
@@ -195,13 +231,18 @@ def main():
     ship3Text = font.render('', 1, BLUE)
     ship4Text = font.render('', 1, BLUE)
     ship_selectText = font.render('SELECT', 1, BLUE)
+    shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
+    shipUnlockText = font.render("UNLOCK : P", 1, RED)
 
     ship1Pos = ship1Text.get_rect(midbottom=ship1Rect.inflate(0, 0).midbottom)
     ship2Pos = ship2Text.get_rect(midbottom=ship2Rect.inflate(0, 0).midbottom)
     ship3Pos = ship3Text.get_rect(midbottom=ship3Rect.inflate(0, 0).midbottom)
     ship4Pos = ship4Text.get_rect(midbottom=ship4Rect.inflate(0, 0).midbottom)
     ship_selectPos = ship_selectText.get_rect(midbottom=ship1Rect.inflate(0, 60).midbottom)
-    
+    shipUI_coinPos = shipUI_coinText.get_rect(midbottom=ship1Rect.inflate(0, 200).midbottom)
+    shipUnlockPos = ship4Text.get_rect(midbottom=ship3Rect.inflate(0, 200).midbottom)
+
+
     ship_menuDict = {1: ship1Pos, 2: ship2Pos, 3: ship3Pos, 4: ship4Pos}
 
     startText = font.render('START GAME', 1, BLUE)
@@ -364,7 +405,27 @@ def main():
 
      ####기체이미지 변경 창########
             elif (event.type == pygame.KEYDOWN
-                and event.key == pygame.K_RETURN and showChange_ship):
+                and event.key == pygame.K_RETURN 
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 1):
+                showChange_ship = False
+            elif (event.type == pygame.KEYDOWN          #ship2가 언락된 상태에서만 엔터를 눌렀을 때 선택가능
+                and event.key == pygame.K_RETURN 
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 2
+                and ship2_check.get_isShip2unlock()):
+                showChange_ship = False
+            elif (event.type == pygame.KEYDOWN          #ship3가 언락된 상태에서만 엔터를 눌렀을 때 선택가능
+                and event.key == pygame.K_RETURN 
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 3
+                and ship3_check.get_isShip3unlock()):
+                showChange_ship = False
+            elif (event.type == pygame.KEYDOWN          #ship4가 언락된 상태에서만 엔터를 눌렀을 때 선택가능
+                and event.key == pygame.K_RETURN 
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 4
+                and ship4_check.get_isShip4unlock()):
                 showChange_ship = False
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_a
@@ -378,6 +439,39 @@ def main():
                 and not showHiScores
                 and showChange_ship):
                 ship_selection.ship_selection_plus()
+            elif (event.type == pygame.KEYDOWN      #ship2가 잠금되어 있는 상태에서 p키를 눌렀을 때
+                and event.key == pygame.K_p
+                and not showHiScores
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 2
+                and not ship2_check.get_isShip2unlock()):
+                ship2, ship2Rect = load_image('ship2.png')
+                ship2Rect.bottomleft = screen.get_rect().inflate(-337, -300).bottomleft
+                coin_Have -= 1      ##나중에 30으로 변경
+                shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
+                ship2_check.ship2unlock()
+            elif (event.type == pygame.KEYDOWN      #ship3가 잠금되어 있는 상태에서 p키를 눌렀을 때
+                and event.key == pygame.K_p
+                and not showHiScores
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 3
+                and not ship3_check.get_isShip3unlock()):
+                ship3, ship3Rect = load_image('ship3.png')
+                ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft
+                coin_Have -= 1      ##나중에 50으로 변경
+                shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
+                ship3_check.ship3unlock()
+            elif (event.type == pygame.KEYDOWN      #ship4가 잠금되어 있는 상태에서 p키를 눌렀을 때
+                and event.key == pygame.K_p
+                and not showHiScores
+                and showChange_ship
+                and ship_selection.get_ship_selection() == 4
+                and not ship4_check.get_isShip4unlock()):
+                ship4, ship4Rect = load_image('ship4.png')
+                ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft
+                coin_Have -= 1     ##나중에 100으로 변경
+                shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
+                ship4_check.ship4unlock()
             
         ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
@@ -417,6 +511,7 @@ def main():
             modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
             change_shipText = font.render('CHANGE SHIP', 1, BLUE)
             ship_selectText = font.render('SELECT', 1, BLUE)
+            shipUnlockText = font.render("UNLOCK : P", 1, RED)
         else:
             startText = font.render('게임 시작', 1, BLUE)
             hiScoreText = font.render('최고 기록', 1, BLUE)
@@ -432,6 +527,7 @@ def main():
             modeText = font.render(Mode_Dict[select_mode][language.get_language()], 1, YELLOW)
             change_shipText = font.render('기체 변경', 1, BLUE)
             ship_selectText = font.render('선택', 1, BLUE)
+            shipUnlockText = font.render("잠금 해제 : P", 1, RED)
 
         ###################### 점수 화면 ######################
         if not language_check :                 #################################################
@@ -457,7 +553,8 @@ def main():
             screen.blit(ship2, ship2Rect)
             screen.blit(ship3, ship3Rect)
             screen.blit(ship4, ship4Rect)
-            textOverlays = zip([ship1Text,ship2Text,ship3Text,ship4Text,ship_selectText],[ship1Pos,ship2Pos,ship3Pos,ship4Pos,ship_selectPos])
+            screen.blit(shipCoin, shipCoinRect)
+            textOverlays = zip([ship1Text,ship2Text,ship3Text,ship4Text,ship_selectText,shipUI_coinText,shipUnlockText],[ship1Pos,ship2Pos,ship3Pos,ship4Pos,ship_selectPos,shipUI_coinPos,shipUnlockPos])
         else:
             textOverlays = zip([startText, hiScoreText, fxText,
                                 musicText, quitText, modeText, selectText, languageText, change_shipText,        ###########

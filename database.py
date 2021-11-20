@@ -8,7 +8,7 @@ class Database(object):
     @staticmethod
     def getSound(music=False): # 사운드를 데이터베이스에서 불러오는 함수
         conn = pymysql.connect(host='database-batong.cuwmiry5hdel.ap-northeast-2.rds.amazonaws.com', user='admin',
-                               password='batong1234', db='hiScores', charset='utf8')
+동                               password='batong1234', db='hiScores', charset='utf8')
         c = conn.cursor()
         if music:
             c.execute("CREATE TABLE if not exists music (setting integer)")

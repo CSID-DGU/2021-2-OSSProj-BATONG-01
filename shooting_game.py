@@ -750,13 +750,6 @@ def main():
             if soundFX:
                 missile_sound.play()
 
-      # Update Aliens
-        if curTime <= 0 and aliensLeftThisWave > 0:
-            Alien.position()
-            curTime = alienPeriod
-        elif curTime > 0:
-            curTime -= 1
-
         # Collision Detection
         # Aliens
         for alien in Alien.active:
@@ -843,6 +836,12 @@ def main():
                 coin.kill()
             elif coin.rect.top > coin.area.bottom:
                 coin.kill()
+      # Update Aliens
+        if curTime <= 0 and aliensLeftThisWave > 0:
+            Alien.position()
+            curTime = alienPeriod
+        elif curTime > 0:
+            curTime -= 1
 
     # Update text overlays
         if not language_check :                                           ###############################
@@ -879,6 +878,8 @@ def main():
 
 
         if aliensLeftThisWave <= 0:
+            for alien in Alien.active :
+                alien.table()
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1
                 if not language_check:                                                  ################

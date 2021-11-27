@@ -10,7 +10,7 @@ from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, HalfPowerup, Coin, Explosion, Siney, Spikey, Fasty,
                      Roundy, Crawly)
 from database import Database
-from coin import CoinData
+from coin import CoinData, ShipData
 from load import load_image, load_sound, load_music
 
 if not pygame.mixer:
@@ -56,30 +56,6 @@ class Ship_selection_check() : #### 게임 재시작시 변경한 기체이미�
     def get_ship_selection(self) :
         return self.ship_selection
 
-class Ship2_check() :
-    def __init__(self):
-        self.isShip2unlock = False
-    def ship2unlock(self):
-        self.isShip2unlock = True
-    def get_isShip2unlock(self) :
-        return self.isShip2unlock
-
-class Ship3_check() :
-    def __init__(self):
-        self.isShip3unlock = False
-    def ship3unlock(self):
-        self.isShip3unlock = True
-    def get_isShip3unlock(self) :
-        return self.isShip3unlock
-
-class Ship4_check() :
-    def __init__(self):
-        self.isShip4unlock = False
-    def ship4unlock(self):
-        self.isShip4unlock = True
-    def get_isShip4unlock(self) :
-        return self.isShip4unlock
-
 class Keyboard(object):
     keys = {pygame.K_a: 'A', pygame.K_b: 'B', pygame.K_c: 'C', pygame.K_d: 'D',
             pygame.K_e: 'E', pygame.K_f: 'F', pygame.K_g: 'G', pygame.K_h: 'H',
@@ -92,9 +68,6 @@ class Keyboard(object):
 language = Language_check()
 mode = Mode_check()
 ship_selection = Ship_selection_check() 
-ship2_check = Ship2_check()
-ship3_check = Ship3_check()
-ship4_check = Ship4_check()
 
 ###############  MAIN ###############################################
 def main():
@@ -210,15 +183,15 @@ def main():
     ship1, ship1Rect = load_image('ship.png')
     ship1Rect.bottomleft = screen.get_rect().inflate(-112, -300).bottomleft
 
-    if ship2_check.get_isShip2unlock() : ship2, ship2Rect = load_image('ship2.png')
+    if ShipData.load_unlock(2) : ship2, ship2Rect = load_image('ship2.png')
     else : ship2, ship2Rect = load_image('ship2_lock.png')
     ship2Rect.bottomleft = screen.get_rect().inflate(-337, -290).bottomleft 
 
-    if ship3_check.get_isShip3unlock() : ship3, ship3Rect = load_image('ship3.png')
+    if ShipData.load_unlock(3) : ship3, ship3Rect = load_image('ship3.png')
     else : ship3, ship3Rect = load_image('ship3_lock.png')
     ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft 
 
-    if ship4_check.get_isShip4unlock() : ship4, ship4Rect = load_image('ship4.png')
+    if ShipData.load_unlock(4) : ship4, ship4Rect = load_image('ship4.png')
     else : ship4, ship4Rect = load_image('ship4_lock.png')
     ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft 
 
@@ -413,19 +386,19 @@ def main():
                 and event.key == pygame.K_RETURN 
                 and showChange_ship
                 and ship_selection.get_ship_selection() == 2
-                and ship2_check.get_isShip2unlock()):
+                and ShipData.load_unlock(2)) :
                 showChange_ship = False
             elif (event.type == pygame.KEYDOWN          #ship3가 언락된 상태에서만 엔터를 눌렀을 때 선택가능
                 and event.key == pygame.K_RETURN 
                 and showChange_ship
                 and ship_selection.get_ship_selection() == 3
-                and ship3_check.get_isShip3unlock()):
+                and ShipData.load_unlock(3)):
                 showChange_ship = False
             elif (event.type == pygame.KEYDOWN          #ship4가 언락된 상태에서만 엔터를 눌렀을 때 선택가능
                 and event.key == pygame.K_RETURN 
                 and showChange_ship
                 and ship_selection.get_ship_selection() == 4
-                and ship4_check.get_isShip4unlock()):
+                and ShipData.load_unlock(4)):
                 showChange_ship = False
             elif (event.type == pygame.KEYDOWN
                 and event.key == pygame.K_a
@@ -444,34 +417,38 @@ def main():
                 and not showHiScores
                 and showChange_ship
                 and ship_selection.get_ship_selection() == 2
-                and not ship2_check.get_isShip2unlock()):
-                ship2, ship2Rect = load_image('ship2.png')
-                ship2Rect.bottomleft = screen.get_rect().inflate(-337, -300).bottomleft
-                coin_Have -= 1      ##나중에 30으로 변경
-                shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
-                ship2_check.ship2unlock()
+                and not ShipData.load_unlock(2)):
+                if coin_Have >= 30 :
+                    ship2, ship2Rect = load_image('ship2.png')
+                    ship2Rect.bottomleft = screen.get_rect().inflate(-337, -300).bottomleft
+                    CoinData.buy(30)
+                    coin_Have = CoinData.load()
+                    shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
             elif (event.type == pygame.KEYDOWN      #ship3가 잠금되어 있는 상태에서 p키를 눌렀을 때
                 and event.key == pygame.K_p
                 and not showHiScores
                 and showChange_ship
                 and ship_selection.get_ship_selection() == 3
-                and not ship3_check.get_isShip3unlock()):
-                ship3, ship3Rect = load_image('ship3.png')
-                ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft
-                coin_Have -= 1      ##나중에 50으로 변경
-                shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
-                ship3_check.ship3unlock()
+                and not ShipData.load_unlock(3)):
+                if coin_Have >= 50 :
+                    ship3, ship3Rect = load_image('ship3.png')
+                    ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft
+                    CoinData.buy(50)
+                    coin_Have = CoinData.load()
+                    shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
             elif (event.type == pygame.KEYDOWN      #ship4가 잠금되어 있는 상태에서 p키를 눌렀을 때
                 and event.key == pygame.K_p
                 and not showHiScores
                 and showChange_ship
                 and ship_selection.get_ship_selection() == 4
-                and not ship4_check.get_isShip4unlock()):
-                ship4, ship4Rect = load_image('ship4.png')
-                ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft
-                coin_Have -= 1     ##나중에 100으로 변경
-                shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
-                ship4_check.ship4unlock()
+                and not ShipData.load_unlock(4)):
+                if coin_Have >= 100 :
+                    ship4, ship4Rect = load_image('ship4.png')
+                    ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft
+                    CoinData.buy(100)
+                    coin_Have = CoinData.load()
+                    shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
+                   
             
         ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
@@ -750,13 +727,6 @@ def main():
             if soundFX:
                 missile_sound.play()
 
-      # Update Aliens
-        if curTime <= 0 and aliensLeftThisWave > 0:
-            Alien.position()
-            curTime = alienPeriod
-        elif curTime > 0:
-            curTime -= 1
-
         # Collision Detection
         # Aliens
         for alien in Alien.active:
@@ -843,6 +813,12 @@ def main():
                 coin.kill()
             elif coin.rect.top > coin.area.bottom:
                 coin.kill()
+      # Update Aliens
+        if curTime <= 0 and aliensLeftThisWave > 0:
+            Alien.position()
+            curTime = alienPeriod
+        elif curTime > 0:
+            curTime -= 1
 
     # Update text overlays
         if not language_check :                                           ###############################
@@ -879,6 +855,8 @@ def main():
 
 
         if aliensLeftThisWave <= 0:
+            for alien in Alien.active :
+                alien.table()
             if betweenWaveCount > 0:
                 betweenWaveCount -= 1
                 if not language_check:                                                  ################

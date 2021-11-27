@@ -422,8 +422,8 @@ def main():
                     ship2, ship2Rect = load_image('ship2.png')
                     ship2Rect.bottomleft = screen.get_rect().inflate(-337, -300).bottomleft
                     CoinData.buy(30)
+                    coin_Have = CoinData.load()
                     shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
-                    ##ship2_check.ship2unlock()
             elif (event.type == pygame.KEYDOWN      #ship3가 잠금되어 있는 상태에서 p키를 눌렀을 때
                 and event.key == pygame.K_p
                 and not showHiScores
@@ -434,8 +434,8 @@ def main():
                     ship3, ship3Rect = load_image('ship3.png')
                     ship3Rect.bottomleft = screen.get_rect().inflate(-562, -300).bottomleft
                     CoinData.buy(50)
+                    coin_Have = CoinData.load()
                     shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
-                    ##ship3_check.ship3unlock()
             elif (event.type == pygame.KEYDOWN      #ship4가 잠금되어 있는 상태에서 p키를 눌렀을 때
                 and event.key == pygame.K_p
                 and not showHiScores
@@ -446,8 +446,9 @@ def main():
                     ship4, ship4Rect = load_image('ship4.png')
                     ship4Rect.bottomleft = screen.get_rect().inflate(-787, -300).bottomleft
                     CoinData.buy(100)
+                    coin_Have = CoinData.load()
                     shipUI_coinText = font.render(f'        : {coin_Have}',1 , (255,215,0))
-                    ##ship4_check.ship4unlock()
+                   
             
         ship_selectPos = ship_selectText.get_rect(midbottom=ship_menuDict[ship_selection.get_ship_selection()].inflate(0,60).midbottom)
         selectPos = selectText.get_rect(topright=menuDict[selection].topleft)

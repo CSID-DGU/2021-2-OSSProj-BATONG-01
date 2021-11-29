@@ -14,14 +14,14 @@ pip install pygame
 pip install pymysql
 ```
 
-```python
-git clone https://www.github.com/CSID-DGU/2021-2-OSSProj-BATONG-01/
+```shell
+git clone https://www.github.com/CSID-DGU/2021-2-OSSProj-BATONG-01.git/
 ```
    
-```python
+```shell
 cd 
 ```
    
-```python
+```shell
 python3 shooting_game.py
 ```

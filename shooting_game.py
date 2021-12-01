@@ -4,7 +4,6 @@ from collections import deque
 
 from pygame.constants import SCALED, VIDEORESIZE
 from pygame import Surface, draw
-from pymysql import NULL
 
 
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
@@ -166,11 +165,11 @@ def main():
                     font.render("SCORE", 1, RED),
                     font.render("ACCURACY", 1, RED)]
     highScorePos = [highScoreTexts[0].get_rect(
-                      topleft=screen.get_rect().inflate(-100, -100).topleft),
+                      topleft=screen.get_rect().inflate(-50, -50).topleft),
                     highScoreTexts[1].get_rect(
-                      midtop=screen.get_rect().inflate(-100, -100).midtop),
+                      midtop=screen.get_rect().inflate(-50, -50).midtop),
                     highScoreTexts[2].get_rect(
-                      topright=screen.get_rect().inflate(-100, -100).topright)]
+                      topright=screen.get_rect().inflate(-50, -50).topright)]
 
     title, titleRect = load_image('title.png')
     titleRect.midtop = screen.get_rect().inflate(0, -150).midtop
@@ -582,7 +581,7 @@ def main():
             elif (event.type == pygame.KEYUP
                   and event.key in direction.keys()):
                 ship.horiz -= direction[event.key][0] * speed
-                ship.vert -= direction[event.key][1] * speed            
+                ship.vert -= direction[event.key][1] * speed
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_SPACE):
                 time = 0
@@ -600,7 +599,7 @@ def main():
                         bomb_sound.play()
             elif (event.type == pygame.KEYDOWN
                     and event.key == pygame.K_p): ####### 일시정지 ######
-                ship.horiz = direction[None][0] * speed  ##일시정지 오류해결##
+                ship.horiz = direction[None][0] * speed
                 ship.vert = direction[None][1] * speed
                 pauseMenu = True
                 menuDict = {1: resumePos, 2: hiScorePos, 3: fxPos, 4: musicPos, 5: quitPos_pause,
@@ -723,8 +722,6 @@ def main():
                     for txt, pos in textOverlays:
                         screen.blit(txt, pos)
                     pygame.display.flip()
-        
-
 
         if Missile_on == True and time%Missile_gap == 0:
             Missile.position(ship.rect.midtop)
@@ -856,9 +853,6 @@ def main():
             heartPos.append([screen.get_width()-life_img.get_width()*i, scoreText.get_height()])
 
     ###################### 다음 wave : Detertmine when to move to next wave ########################
-
-
-
         if aliensLeftThisWave <= 0:
             for alien in Alien.active :
                 alien.table()

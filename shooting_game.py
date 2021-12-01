@@ -165,11 +165,11 @@ def main():
                     font.render("SCORE", 1, RED),
                     font.render("ACCURACY", 1, RED)]
     highScorePos = [highScoreTexts[0].get_rect(
-                      topleft=screen.get_rect().inflate(-100, -100).topleft),
+                      topleft=screen.get_rect().inflate(-50, -50).topleft),
                     highScoreTexts[1].get_rect(
-                      midtop=screen.get_rect().inflate(-100, -100).midtop),
+                      midtop=screen.get_rect().inflate(-50, -50).midtop),
                     highScoreTexts[2].get_rect(
-                      topright=screen.get_rect().inflate(-100, -100).topright)]
+                      topright=screen.get_rect().inflate(-50, -50).topright)]
 
     title, titleRect = load_image('title.png')
     titleRect.midtop = screen.get_rect().inflate(0, -150).midtop

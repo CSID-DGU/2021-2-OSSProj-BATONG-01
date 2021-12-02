@@ -5,6 +5,10 @@
 ```shell
 sudo apt-get update
 ```
+
+```shell
+sudo apt install python3-pip
+```
    
 ```shell
 pip install pygame
@@ -19,7 +23,7 @@ git clone https://www.github.com/CSID-DGU/2021-2-OSSProj-BATONG-01.git/
 ```
    
 ```shell
-cd 
+cd 2021-2-OSSProj-BATONG-01/
 ```
    
 ```shell

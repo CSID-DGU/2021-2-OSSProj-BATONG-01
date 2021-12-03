@@ -28,10 +28,10 @@
 ![image](https://user-images.githubusercontent.com/65498159/121726665-d43e1900-cb25-11eb-8862-d10e37284723.png)
 * **비행기가 적과 충돌하면 우측 상단의 라이프가 줄어듭니다. 라이프가 모두 사라지면 게임이 종료됩니다.**
 * **폭탄, 쉴드, 적절반 아이템, 코인은 랜덤으로 드랍됩니다.** 
-* **획득한 코인으로 메뉴화면에서 새로운 비행기를 unlock할 수 있습니다.**
-* **폭탄은 b키로 사용할 수 있고, 쉴드와 적절반 아이템은 획득시 자동 사용됩니다.**
-* **쉴드 아이템은 적과 충돌을 1회 무효화시켜줍니다.**
-* **적절반 아이템은 스테이지의 남은 적 수를 절반으로 줄여줍니다.**
+* **획득한 코인![image](https://github.com/wogur311/2021-2-OSSProj-BATONG-01/blob/main/data/coin.png?raw=true)으로 메뉴화면에서 새로운 비행기를 unlock할 수 있습니다.**
+* **폭탄 아이템![image](https://github.com/wogur311/2021-2-OSSProj-BATONG-01/blob/main/data/bomb_powerup.png?raw=true)은 b키로 사용할 수 있고, 화면 내 모든 적을 죽입니다.**
+* **쉴드 아이템![image](https://github.com/wogur311/2021-2-OSSProj-BATONG-01/blob/main/data/shield_powerup.png?raw=true)은 획득 시 자동으로 사용되고, 적과 충돌을 1회 무효화시켜줍니다.**
+* **적절반 아이템![image](https://github.com/wogur311/2021-2-OSSProj-BATONG-01/blob/main/data/half_powerup.png?raw=true)은 획득 시 자동으로 사용되고, 스테이지의 남은 적 수를 절반으로 줄여줍니다.**
 * **메뉴화면에서 난이도를 설정할 수 있습니다. 난이도는 easy, normal, hard 세가지로 나뉘며 난이도에 따라 라이프 수, 폭탄 아이템 수, 적 이동속도 증가율, 남은 적 증가율이 조정됩니다.**
 * **메뉴화면에서 언어를 한국어로 변경할 수 있습니다.**
 

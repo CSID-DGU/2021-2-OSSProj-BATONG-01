@@ -11,7 +11,7 @@
 * **팀장 : 동국대학교 바이오환경과학과** [**이희경**](https://github.com/HKLeeeee)
 * **팀원 : 동국대학교 통계학과** [**노현영**](https://github.com/hyunyoung0724)
 * **팀원 : 동국대학교 통계학과** [**안재혁**](https://github.com/wogur311)
-* [BATONG's Notion Page](https://www.notion.so/2021-2-OSSP-BATONG-6c798b0fa0e74f52ab13c10d03274505)
+* [**BATONG's Notion Page**](https://www.notion.so/2021-2-OSSP-BATONG-6c798b0fa0e74f52ab13c10d03274505)
 ## 게임 소개
 #### 1. 시작화면
 ![images](https://github.com/wogur311/2021-2-OSSProj-BATONG-01/blob/main/data/%EB%B0%B0%EA%B2%BD%ED%99%94%EB%A9%B4.PNG?raw=true)

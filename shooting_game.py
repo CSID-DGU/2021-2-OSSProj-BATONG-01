@@ -70,20 +70,22 @@ language = Language_check()
 mode = Mode_check()
 ship_selection = Ship_selection_check() 
 
-class resizing :
+class screen_resizing :
     scr_size = 500
-    def change_size(s) :
-        resizing.scr_size = s
+    def change_size(self, s) :
+        self.scr_size = s
+
+resizing = screen_resizing()
 
 ###############  MAIN ###############################################
 def main(scr):
     scr_size = scr
-    min_size = 300
+    
     class size :
         x_background_ratio = 1
         x_background = scr_size*x_background_ratio
         width, height = 500, 500
-        min_size = 500
+        min_size = 300
         background = scr_size*4
         backgroundLoc = scr_size*3
         star_seq = round(scr_size*0.06)
@@ -343,7 +345,7 @@ def main(scr):
     while inMenu:
         scr_x, scr_y = pygame.display.get_surface().get_size()
         if size.x_background != scr_x or scr_size != scr_y :
-            return min(scr_x//size.x_background_ratio, scr_y)    # 메뉴화면에서만 창 사이즈 크기 확인하고, 변경되면 main 재시작
+             return min(scr_x, scr_y)    # 메뉴화면에서만 창 사이즈 크기 확인하고, 변경되면 main 재시작
         clock.tick(clockTime)
 
         screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
@@ -453,13 +455,11 @@ def main(scr):
             elif (event.type == pygame.VIDEORESIZE) :
                 width = event.w
                 height = event.h
-
-                if width < min_size or height < min_size:  # 화면의 최소 크기
-                    height = min_size
+                if width < size.min_size or height < size.min_size:  # 화면의 최소 크기
+                    height = size.min_size
                 if width/height != 1 : ## 1::1 비율 유지
-                    width = int((width+height)/2) ## 가로세로 사이즈의 평균으로
-                    height = int((width+height)/2)
-                
+                    width = max(width, height)
+                    height = max(width, height)
                 resizing.change_size(height)
 
      ####기체이미지 변경 창########

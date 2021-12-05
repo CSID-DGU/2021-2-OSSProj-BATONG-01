@@ -109,7 +109,7 @@ def main(scr):
         size.speed = scr_size*0.004
         size.background = scr_size*4
         size.backgroundLoc = scr_size*3
-        size.star_seq = int(scr_size*0.06)
+        size.star_seq = round(scr_size*0.06)
         size.star_s = round(scr_size*0.004)
         size.star_l = round(scr_size*0.01)
         size.font_s =  round(scr_size*0.040)
@@ -702,7 +702,7 @@ def main(scr):
                 height = event.h
                 if width < size.min_size or height < size.min_size:  # 화면의 최소 크기
                     height = size.min_size
-                    
+
                 Alien.pool = pygame.sprite.Group([alien() for alien in currentAlienTypes for _ in range(len(currentAlienTypes)*5)])
                 prev_scr_size = scr_size
                 scr_size, screen, background, backgroundLoc = resize(scr_x, scr_y)
@@ -714,7 +714,6 @@ def main(scr):
                     i.area = ship.screen.get_rect()
 
                 ship.speed = round(shipspeed * scr_size / prev_scr_size)
-                ship.shield = pygame.transform.scale(ship.shield, (round(ship.shield.get_width()* scr_size / prev_scr_size), round(ship.shield.get_height()*scr_size / prev_scr_size)))
                 ship.rect[0], ship.rect[1] = shipx, shipy
                 ship.original = ship.image
                 ship.radius = max(ship.rect.width, ship.rect.height)
@@ -1052,16 +1051,19 @@ def main(scr):
 
     # Event Handling
         CoinData.setCoins(coin_Have) ##정상적으로 게임을 끝마쳤을때만 코인개수 저장
+        
         for event in pygame.event.get():
             if (event.type == pygame.QUIT
                 or not isHiScore
                 and event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
-                return False
+                pygame.quit()
+                sys.exit()
+                #return False
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_RETURN
                   and not isHiScore):
-                return True
+                return scr_size
             elif (event.type == pygame.KEYDOWN
                   and event.key in Keyboard.keys.keys()
                   and len(nameBuffer) < 8):
@@ -1076,7 +1078,7 @@ def main(scr):
                   and event.key == pygame.K_RETURN
                   and len(name) > 0):
                 Database.setScore(hiScores, (name, score, accuracy))
-                return True
+                return scr_size
 
         if isHiScore:
             if not language_check:                                     #################################

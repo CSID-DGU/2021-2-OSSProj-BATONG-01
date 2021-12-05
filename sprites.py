@@ -284,7 +284,6 @@ class Alien(MasterSprite):
             Alien.numOffScreen -= 1
 
     def update(self):
-        
         horiz, vert = self.moveFunc()
         if horiz + self.initialRect.x > scr_size:
             horiz -= scr_size + self.rect.width
@@ -304,7 +303,7 @@ class Alien(MasterSprite):
 class Siney(Alien):
     def __init__(self):
         super().__init__('green')
-        self.amp = random.randint(self.rect.width, 3 * self.rect.width)
+        self.amp = random.randint(self.rect.width, siney_move * self.rect.width)
         self.freq = freq
         self.moveFunc = lambda: (self.amp * math.sin(self.loc * self.freq), 0)
 
@@ -312,7 +311,7 @@ class Siney(Alien):
 class Roundy(Alien):
     def __init__(self):
         super().__init__('red')
-        self.amp = random.randint(self.rect.width, 2 * self.rect.width)
+        self.amp = random.randint(self.rect.width, roundy_move * self.rect.width)
         self.freq = freq
         self.moveFunc = lambda: (
             self.amp *
@@ -328,8 +327,8 @@ class Roundy(Alien):
 class Spikey(Alien):
     def __init__(self):
         super().__init__('blue')
-        self.slope = random.choice(list(x for x in range(-3, 3) if x != 0))
-        self.period = random.choice(list(4 * x for x in range(10, 41)))
+        self.slope = random.choice(list(x for x in spikey_slope if x != 0))
+        self.period = random.choice(list(spikey_interval * x for x in range(10, 41)))
         self.moveFunc = lambda: (self.slope * (self.loc % self.period)
                                  if self.loc % self.period < self.period // 2
                                  else self.slope * self.period // 2
@@ -340,7 +339,7 @@ class Spikey(Alien):
 class Fasty(Alien):
     def __init__(self):
         super().__init__('white')
-        self.moveFunc = lambda: (0, 3 * self.loc)
+        self.moveFunc = lambda: (0, fasty_movefunc * self.loc)
 
 
 class Crawly(Alien):

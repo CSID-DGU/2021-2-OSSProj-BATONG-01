@@ -98,8 +98,7 @@ def main(scr):
         star_seq = round(scr_size*0.06)
         star_s = round(scr_size*0.004)
         star_l = round(scr_size*0.01)
-        font_eng = round(scr_size*0.065)
-        font_kor =  round(scr_size*0.040)
+        font_s =  round(scr_size*0.040)
         middletoppos = scr_size*0.35
         topendpos = scr_size*0.15
         middlepos = x_background*0.5
@@ -110,13 +109,12 @@ def main(scr):
         size.speed = scr_size*0.004
         size.background = scr_size*4
         size.backgroundLoc = scr_size*3
-        size.star_seq = round(scr_size*0.06)
+        size.star_seq = int(scr_size*0.06)
         size.star_s = round(scr_size*0.004)
         size.star_l = round(scr_size*0.01)
-        size.font_eng = round(scr_size*0.065)
-        size.font_kor =  round(scr_size*0.040)
+        size.font_s =  round(scr_size*0.040)
         size.ratio = scr_size*0.002
-
+        
     def resize(x, y) :
         scr_size = min(x//size.x_background_ratio, y)
         if scr_size < 300 :
@@ -144,12 +142,12 @@ def main(scr):
             x, y, starsize = finalStars.pop()
             pygame.draw.rect(
                 background, YELLOW, pygame.Rect(x, y, starsize, starsize))
-
+        font = pygame.font.SysFont("notosanscjkkr", size.font_s, bold=pygame.font.Font.bold, )
         title, titleRect = load_image('title.png')
         title = pygame.transform.scale(title, (round(title.get_width()*size.ratio), round(title.get_height()*size.ratio)))
         titleRect = pygame.Rect(0, 0, title.get_width(), title.get_height())
-        titleRect.midtop = screen.get_rect().inflate(0, -size.middletoppos).midtop
-        scr_size, screen, background, backgroundLoc
+        titleRect.midtop = screen.get_rect().inflate(0, -size.middletoppos).midtop        
+        return scr_size, screen, background, backgroundLoc
 
     def background_update(screen, background, backgroundLoc) :
         screen.blit(
@@ -200,6 +198,7 @@ def main(scr):
     clock = pygame.time.Clock()
     ship = Ship()
     initialAlienTypes = (Siney, Spikey)
+    currentAlienTypes = [Siney, Spikey]
     powerupTypes = (BombPowerup, ShieldPowerup, HalfPowerup)
     M_time = 0
     Missile_on = False
@@ -261,7 +260,7 @@ def main(scr):
                       topright=screen.get_rect().inflate(-50, -50).topright)]
 
     title, titleRect = load_image('title.png')
-    titleRect.midtop = screen.get_rect().inflate(0, -150).midtop
+    titleRect.midtop = screen.get_rect().inflate(0, -size.x_background*0.35).midtop
     waveclear, waveclearRect = load_image('waveclear450.png')  #####wave넘어가는이미지 불러오기######################
     waveclearRect.midtop = screen.get_rect().inflate(0, 0).midtop   ####wave넘어가는이미지 위치설정#########################
     
@@ -651,30 +650,6 @@ def main(scr):
     #############################################################
     while ship.alive:
         scr_x , scr_y = pygame.display.get_surface().get_size()
-        if size.x_background != scr_x or scr_size != scr_y :
-            prev_scr_size = scr_size
-            scr_size,screen, background, backgroundLoc = resize(scr_x, scr_y)
-            shipx, shipy = ship.rect[0] * scr_size / prev_scr_size, ship.rect[1] * scr_size / prev_scr_size
-            shipspeed = ship.speed
-
-            Alien.pool = pygame.sprite.Group([alien() for alien in initialAlienTypes for _ in range(5)])
-            powerupTypes = (BombPowerup, ShieldPowerup, HalfPowerup)
-            Missile.pool = pygame.sprite.Group([Missile() for _ in range(10)])
-            Explosion.pool = pygame.sprite.Group([Explosion() for _ in range(10)])
-
-            for i in allsprites.sprites() :
-                for j in i.rect :
-                    j = j * scr_size / prev_scr_size
-                i.image = pygame.transform.scale(i.image, (round(i.image.get_width()* scr_size / prev_scr_size), round(i.image.get_height()*scr_size / prev_scr_size)))
-                i.rect = pygame.Rect(0, 0, i.image.get_width(), i.image.get_height())
-                i.screen = pygame.display.get_surface()
-                i.area = ship.screen.get_rect()
-
-            ship.speed = round(shipspeed * scr_size / prev_scr_size)
-            ship.shield = pygame.transform.scale(ship.shield, (round(ship.shield.get_width()* scr_size / prev_scr_size), round(ship.shield.get_height()*scr_size / prev_scr_size)))
-            ship.rect[0], ship.rect[1] = shipx, shipy
-            ship.original = ship.image
-            ship.radius = max(ship.rect.width, ship.rect.height)
 
         clock.tick(clockTime)
         M_time += 1
@@ -722,6 +697,28 @@ def main(scr):
                     newBomb.add(bombs, alldrawings)
                     if soundFX:
                         bomb_sound.play()
+            elif (event.type == pygame.VIDEORESIZE):
+                width = event.w
+                height = event.h
+                if width < size.min_size or height < size.min_size:  # 화면의 최소 크기
+                    height = size.min_size
+                    
+                Alien.pool = pygame.sprite.Group([alien() for alien in currentAlienTypes for _ in range(len(currentAlienTypes)*5)])
+                prev_scr_size = scr_size
+                scr_size, screen, background, backgroundLoc = resize(scr_x, scr_y)
+                shipx, shipy = ship.rect[0] * scr_size / prev_scr_size, ship.rect[1] * scr_size / prev_scr_size
+                shipspeed = ship.speed
+                for i in allsprites.sprites() :
+                    i.rect = pygame.Rect(0, 0, i.image.get_width(), i.image.get_height())
+                    i.screen = pygame.display.get_surface()
+                    i.area = ship.screen.get_rect()
+
+                ship.speed = round(shipspeed * scr_size / prev_scr_size)
+                ship.shield = pygame.transform.scale(ship.shield, (round(ship.shield.get_width()* scr_size / prev_scr_size), round(ship.shield.get_height()*scr_size / prev_scr_size)))
+                ship.rect[0], ship.rect[1] = shipx, shipy
+                ship.original = ship.image
+                ship.radius = max(ship.rect.width, ship.rect.height)
+
             elif (event.type == pygame.KEYDOWN
                     and event.key == pygame.K_p): ####### 일시정지 ######
                 ship.horiz = direction[None][0] * speed
@@ -733,12 +730,6 @@ def main(scr):
                 while pauseMenu:
                     clock.tick(clockTime)
                     screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
-                    screen.blit(
-                        background, (0, 0), area=pygame.Rect(
-                            0, backgroundLoc, 500, 500))
-                    backgroundLoc -= speed
-                    if backgroundLoc - speed <= speed:
-                        backgroundLoc = 1500
 
                     for event in pygame.event.get():
                         if (event.type == pygame.QUIT):
@@ -1025,10 +1016,13 @@ def main(scr):
                     aliensLeftThisWave = Alien.numOffScreen = aliensThisWave
                 if wave == 1:
                     Alien.pool.add([Fasty() for _ in range(5)])
+                    currentAlienTypes.append(Fasty)
                 if wave == 2:
                     Alien.pool.add([Roundy() for _ in range(5)])
+                    currentAlienTypes.append(Roundy)
                 if wave == 3:
                     Alien.pool.add([Crawly() for _ in range(5)])
+                    currentAlienTypes.append(Crawly)
                 wave += 1
                 betweenWaveCount = betweenWaveTime
 
@@ -1036,12 +1030,6 @@ def main(scr):
 
     ################# Update and draw all sprites and text
         screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
-        screen.blit(
-            background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
-        backgroundLoc -= speed
-        if backgroundLoc - speed <= speed:
-            backgroundLoc = 1500
         allsprites.update()
         allsprites.draw(screen)
         alldrawings.update()
@@ -1127,12 +1115,6 @@ def main(scr):
 
     ############################### Update and draw all sprites ############################################
         screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
-        screen.blit(
-            background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
-        backgroundLoc -= speed
-        if backgroundLoc - speed <= 0:
-            backgroundLoc = 1500
         allsprites.update()
         allsprites.draw(screen)
         alldrawings.update()

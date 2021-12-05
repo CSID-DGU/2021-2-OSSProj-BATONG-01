@@ -259,9 +259,11 @@ class Alien(MasterSprite):
 
 
     @classmethod
-    def position(cls):
+    def position(cls):  
         if len(cls.pool) > 0 and cls.numOffScreen > 0:
             alien = random.choice(cls.pool.sprites())
+            screen = pygame.display.get_surface()
+            alien.area = screen.get_rect()
             if isinstance(alien, Crawly):
                 alien.rect.midbottom = (random.choice(
                     (alien.area.left, alien.area.right)),
@@ -282,6 +284,7 @@ class Alien(MasterSprite):
             Alien.numOffScreen -= 1
 
     def update(self):
+        
         horiz, vert = self.moveFunc()
         if horiz + self.initialRect.x > scr_size:
             horiz -= scr_size + self.rect.width

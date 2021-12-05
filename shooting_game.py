@@ -650,7 +650,6 @@ def main(scr):
     #############################################################
     while ship.alive:
         scr_x , scr_y = pygame.display.get_surface().get_size()
-
         clock.tick(clockTime)
         M_time += 1
 
@@ -702,10 +701,10 @@ def main(scr):
                 height = event.h
                 if width < size.min_size or height < size.min_size:  # 화면의 최소 크기
                     height = size.min_size
-
-                Alien.pool = pygame.sprite.Group([alien() for alien in currentAlienTypes for _ in range(len(currentAlienTypes)*5)])
+                
                 prev_scr_size = scr_size
                 scr_size, screen, background, backgroundLoc = resize(scr_x, scr_y)
+                Alien.pool = pygame.sprite.Group([alien() for alien in currentAlienTypes for _ in range(len(currentAlienTypes)*5)])
                 shipx, shipy = ship.rect[0] * scr_size / prev_scr_size, ship.rect[1] * scr_size / prev_scr_size
                 shipspeed = ship.speed
                 for i in allsprites.sprites() :
@@ -924,7 +923,8 @@ def main(scr):
                         score += (half_of_alien)
                         if aliensLeftThisWave<0 :
                             aliensLeftThisWave = 0
-      
+                    curTime = alienPeriod
+
                 powerup.kill()
             elif powerup.rect.top > powerup.area.bottom:
                 powerup.kill()

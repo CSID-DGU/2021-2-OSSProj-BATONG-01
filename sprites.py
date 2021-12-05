@@ -257,13 +257,14 @@ class Alien(MasterSprite):
         self.loc = 0
         self.radius = min(self.rect.width // 2, self.rect.height // 2)
 
-
+    def update_background(self) :
+        screen = pygame.display.get_surface()
+        self.area = screen.get_rect()
+        
     @classmethod
     def position(cls):  
         if len(cls.pool) > 0 and cls.numOffScreen > 0:
             alien = random.choice(cls.pool.sprites())
-            screen = pygame.display.get_surface()
-            alien.area = screen.get_rect()
             if isinstance(alien, Crawly):
                 alien.rect.midbottom = (random.choice(
                     (alien.area.left, alien.area.right)),

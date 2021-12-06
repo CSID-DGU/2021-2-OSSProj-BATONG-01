@@ -287,54 +287,32 @@ def main():
                         ship.image, ship.rect = load_image('ship.png', -1)
                         ship.original = ship.image
                         ship.shield, ship.rect = load_image('ship_shield.png', -1)
-                        ship.screen = pygame.display.get_surface()
-                        ship.area = ship.screen.get_rect()
-                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                        ship.radius = max(ship.rect.width, ship.rect.height)
-                        ship.alive = True  ##### life
-                        ship.shieldUp = False
-                        ship.vert = 0
-                        ship.horiz = 0
-                        showChange_ship = False
+
                     elif ship_selection.get_ship_selection() == 2:
                         ship.image, ship.rect = load_image('ship2.png', -1)
                         ship.original = ship.image
                         ship.shield, ship.rect = load_image('ship2_shield.png', -1)
-                        ship.screen = pygame.display.get_surface()
-                        ship.area = ship.screen.get_rect()
-                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                        ship.radius = max(ship.rect.width, ship.rect.height)
-                        ship.alive = True  ##### life
-                        ship.shieldUp = False
-                        ship.vert = 0
-                        ship.horiz = 0
-                        showChange_ship = False
+ 
                     elif ship_selection.get_ship_selection() == 3:
                         ship.image, ship.rect = load_image('ship3.png', -1)
                         ship.original = ship.image
                         ship.shield, ship.rect = load_image('ship3_shield.png', -1)
-                        ship.screen = pygame.display.get_surface()
-                        ship.area = ship.screen.get_rect()
-                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                        ship.radius = max(ship.rect.width, ship.rect.height)
-                        ship.alive = True  ##### life
-                        ship.shieldUp = False
-                        ship.vert = 0
-                        ship.horiz = 0
-                        showChange_ship = False
+
                     elif ship_selection.get_ship_selection() == 4:
                         ship.image, ship.rect = load_image('ship4.png', -1)
                         ship.original = ship.image
                         ship.shield, ship.rect = load_image('ship4_shield.png', -1)
-                        ship.screen = pygame.display.get_surface()
-                        ship.area = ship.screen.get_rect()
-                        ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
-                        ship.radius = max(ship.rect.width, ship.rect.height)
-                        ship.alive = True  ##### life
-                        ship.shieldUp = False
-                        ship.vert = 0
-                        ship.horiz = 0
-                        showChange_ship = False
+                    
+                    ship.screen = pygame.display.get_surface()
+                    ship.area = ship.screen.get_rect()
+                    ship.rect.midbottom = (ship.screen.get_width() // 2, ship.area.bottom)
+                    ship.radius = max(ship.rect.width, ship.rect.height)
+                    ship.alive = True  ##### life
+                    ship.shieldUp = False
+                    ship.vert = 0
+                    ship.horiz = 0
+                    showChange_ship = False
+
                 elif selection == 2:
                     showHiScores = True
                 elif selection == 3:

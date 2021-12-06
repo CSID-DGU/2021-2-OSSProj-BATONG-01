@@ -59,3 +59,5 @@ class Database(object):
         c.execute("INSERT INTO scores VALUES (%s,%s,%s)", entry)
         conn.commit()
         conn.close()
+
+

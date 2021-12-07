@@ -62,3 +62,5 @@ cd 2021-2-OSSProj-BATONG-01/
 python3 shooting_game.py
 ```
 
+### Reference
+- https://github.com/CSID-DGU/2021-1-OSSPC-3People-8

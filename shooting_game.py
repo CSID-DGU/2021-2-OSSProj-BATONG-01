@@ -7,6 +7,7 @@ import time
 
 from pygame.constants import SCALED, VIDEORESIZE
 from pygame import Surface, draw
+from pymysql import NULL
 from pymysql.cursors import SSDictCursor
 
 import sprites
@@ -879,7 +880,8 @@ def main(scr):
                             aliensLeftThisWave -= 1
                         else :
                             aliensLeftThisWave = 0
-
+                        score+=1
+                        
         ### 아이템 획득 : PowerUps
         for powerup in powerups:
             if pygame.sprite.collide_circle(powerup, ship):
@@ -888,21 +890,25 @@ def main(scr):
                 elif powerup.pType == 'shield':
                     ship.shieldUp = True
                 elif powerup.pType == 'half' :
-                    num_of_alien = len(Alien.active.sprites())
+                    num_of_alien = len(Alien.active.sprites()) ##현재 화면에 나와있는 외계인의 수
                     for alien in Alien.active :
-                        alien.table()
+                        alien.table() ## 현재 화면의 외계인 다 없앰
                     pygame.time.delay(20)
-                    if aliensLeftThisWave < num_of_alien :
+                    if aliensLeftThisWave < num_of_alien : ## 남은 외계인 수가 현재 화면에 있는 외계인보다 적을때
                         score += aliensLeftThisWave
                         aliensLeftThisWave = 0
                     else  :
-                        half_of_alien = round(aliensLeftThisWave/2)
-                        aliensLeftThisWave -= (half_of_alien)
-                        score += (half_of_alien)
+                        half_of_alien = round(aliensLeftThisWave/2) 
+                        if half_of_alien<=num_of_alien : ## 화면에 나와있는 외계인의 수가 남은 수의 절반이상이면 화면의 외계인만 처치되게 함
+                            aliensLeftThisWave -= num_of_alien
+                            score += num_of_alien
+                        else : ##화면에 있는 외계인 수 보다 적의 절반의 수가 많으면 
+                            aliensLeftThisWave -= half_of_alien
+                            score += half_of_alien
+    
                         if aliensLeftThisWave<0 :
                             aliensLeftThisWave = 0
-                    curTime = alienPeriod
-
+                   
                 powerup.kill()
             elif powerup.rect.top > powerup.area.bottom:
                 powerup.kill()

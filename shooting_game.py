@@ -651,8 +651,7 @@ def main(scr):
             if (event.type == pygame.QUIT
                 or event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
-                pygame.quit()
-                sys.exit()
+                return
             elif (event.type == pygame.KEYDOWN
                   and event.key in direction.keys()):
                 ship.horiz += direction[event.key][0] * speed
@@ -881,7 +880,8 @@ def main(scr):
                             aliensLeftThisWave -= 1
                         else :
                             aliensLeftThisWave = 0
-
+                        score+=1
+                        
         ### 아이템 획득 : PowerUps
         for powerup in powerups:
             if pygame.sprite.collide_circle(powerup, ship):

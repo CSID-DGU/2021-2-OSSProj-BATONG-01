@@ -5,6 +5,40 @@ from load import load_image
 
 ### pygame.sprite.Sprite 자식 클래스 
 ### -> MasterSprite, Bomb 
+freq = 1 / 20
+siney_move = 3
+roundy_move = 2
+explosion_linger = 12
+spikey_slope = range(-3, 4)
+spikey_interval = 4
+spikey_period = range(10, 41)
+fasty_movefunc = 3
+
+scr_size = 500
+
+class size :
+    update = scr_size*0.008
+    radius = scr_size*0.04
+    middle = scr_size // 2
+    speed = scr_size*0.002
+    masterspritespeed = scr_size*0.004
+    lives = scr_size*0.06
+    crawly = scr_size*0.006
+    x_background = scr_size*1
+    right = x_background*0.6
+
+def get_size() :
+    global user_size, level_size, scr_size
+    size.update = scr_size*0.008
+    size.radius = scr_size*0.04
+    size.middle = scr_size // 2
+    size.speed = scr_size*0.002
+    size.masterspritespeed = scr_size*0.004
+    size.lives = scr_size*0.06
+    size.crawly = scr_size*0.006
+
+    size.x_background = scr_size*2
+    size.right = size.x_background*0.6
 
 class MasterSprite(pygame.sprite.Sprite):
     ### 자식 클래스들 : Explosion, Missile, Powerup(<- BombPowerup, ShieldPowerup),
@@ -223,8 +257,12 @@ class Alien(MasterSprite):
         self.loc = 0
         self.radius = min(self.rect.width // 2, self.rect.height // 2)
 
+    def update_background(self) :
+        screen = pygame.display.get_surface()
+        self.area = screen.get_rect()
+        
     @classmethod
-    def position(cls):
+    def position(cls):  
         if len(cls.pool) > 0 and cls.numOffScreen > 0:
             alien = random.choice(cls.pool.sprites())
             if isinstance(alien, Crawly):
@@ -248,12 +286,12 @@ class Alien(MasterSprite):
 
     def update(self):
         horiz, vert = self.moveFunc()
-        if horiz + self.initialRect.x > 500:
-            horiz -= 500 + self.rect.width
+        if horiz + self.initialRect.x > scr_size:
+            horiz -= scr_size + self.rect.width
         elif horiz + self.initialRect.x < 0 - self.rect.width:
-            horiz += 500 + self.rect.width
+            horiz += scr_size + self.rect.width
         self.rect = self.initialRect.move((horiz, self.loc + vert))
-        self.loc = self.loc + MasterSprite.speed
+        self.loc = self.loc + MasterSprite.speed * size.speed
         if self.rect.top > self.area.bottom:
             self.table()
             Alien.numOffScreen += 1
@@ -261,21 +299,21 @@ class Alien(MasterSprite):
     def table(self):
         self.kill()
         self.add(self.pool)
-
+   
 
 class Siney(Alien):
     def __init__(self):
         super().__init__('green')
-        self.amp = random.randint(self.rect.width, 3 * self.rect.width)
-        self.freq = (1 / 20)
+        self.amp = random.randint(self.rect.width, siney_move * self.rect.width)
+        self.freq = freq
         self.moveFunc = lambda: (self.amp * math.sin(self.loc * self.freq), 0)
 
 
 class Roundy(Alien):
     def __init__(self):
         super().__init__('red')
-        self.amp = random.randint(self.rect.width, 2 * self.rect.width)
-        self.freq = 1 / (20)
+        self.amp = random.randint(self.rect.width, roundy_move * self.rect.width)
+        self.freq = freq
         self.moveFunc = lambda: (
             self.amp *
             math.sin(
@@ -290,8 +328,8 @@ class Roundy(Alien):
 class Spikey(Alien):
     def __init__(self):
         super().__init__('blue')
-        self.slope = random.choice(list(x for x in range(-3, 3) if x != 0))
-        self.period = random.choice(list(4 * x for x in range(10, 41)))
+        self.slope = random.choice(list(x for x in spikey_slope if x != 0))
+        self.period = random.choice(list(spikey_interval * x for x in range(10, 41)))
         self.moveFunc = lambda: (self.slope * (self.loc % self.period)
                                  if self.loc % self.period < self.period // 2
                                  else self.slope * self.period // 2
@@ -302,7 +340,7 @@ class Spikey(Alien):
 class Fasty(Alien):
     def __init__(self):
         super().__init__('white')
-        self.moveFunc = lambda: (0, 3 * self.loc)
+        self.moveFunc = lambda: (0, fasty_movefunc * self.loc)
 
 
 class Crawly(Alien):

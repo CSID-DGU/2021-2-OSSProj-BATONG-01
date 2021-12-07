@@ -1,11 +1,15 @@
 import pygame
+import sys
 import random
 from collections import deque
+from pygame import sprite
+import time
 
 from pygame.constants import SCALED, VIDEORESIZE
 from pygame import Surface, draw
+from pymysql.cursors import SSDictCursor
 
-
+import sprites
 from sprites import (MasterSprite, Ship, Alien, Missile, BombPowerup,
                      ShieldPowerup, HalfPowerup, Coin, Explosion, Siney, Spikey, Fasty,
                      Roundy, Crawly)
@@ -69,39 +73,122 @@ language = Language_check()
 mode = Mode_check()
 ship_selection = Ship_selection_check() 
 
+class screen_resizing :
+    def __init__(self) :
+        self.size_num = 500
+    def get_size(self) :
+        return self.size_num
+    def change_size(self, s) :
+        self.size_num = s
+    
+
+resizing = screen_resizing()
+
 ###############  MAIN ###############################################
-def main():
+def main(scr):
+    scr_size = scr
+    
+    class size :
+        x_background_ratio = 1
+        x_background = scr_size*x_background_ratio
+        width, height = 500, 500
+        min_size = 300
+        background = scr_size*4
+        backgroundLoc = scr_size*3
+        star_seq = round(scr_size*0.06)
+        star_s = round(scr_size*0.004)
+        star_l = round(scr_size*0.01)
+        font_s =  round(scr_size*0.040)
+        middletoppos = scr_size*0.35
+        topendpos = scr_size*0.15
+        middlepos = x_background*0.5
+        ratio = scr_size*0.002
+
+    def set_size(scr_size) :
+        size.x_background = scr_size*size.x_background_ratio
+        size.speed = scr_size*0.004
+        size.background = scr_size*4
+        size.backgroundLoc = scr_size*3
+        size.star_seq = round(scr_size*0.06)
+        size.star_s = round(scr_size*0.004)
+        size.star_l = round(scr_size*0.01)
+        size.font_s =  round(scr_size*0.040)
+        size.ratio = scr_size*0.002
+        
+    def resize(x, y) :
+        scr_size = min(x//size.x_background_ratio, y)
+        if scr_size < 300 :
+            scr_size = 300
+        user_size = scr_size
+        set_size(scr_size)
+        sprites.get_size()
+        time.sleep(0.1) # 과도한 리사이즈(초당 60번)를 하지 않도록 함
+        screen = pygame.display.set_mode((size.x_background, scr_size), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
+
+        background = pygame.Surface((size.x_background, size.background))
+        background = background.convert()
+        background.fill(BLACK)
+
+        backgroundLoc = size.backgroundLoc
+        finalStars = deque()
+        for y in range(0, size.backgroundLoc, size.star_seq):
+            starsize = random.randint(size.star_s, size.star_l)
+            x = random.randint(0, size.x_background - starsize)
+            if y <= scr_size:
+                finalStars.appendleft((x, y + size.backgroundLoc, starsize))
+            pygame.draw.rect(
+                background, YELLOW, pygame.Rect(x, y, starsize, starsize))
+        while finalStars:
+            x, y, starsize = finalStars.pop()
+            pygame.draw.rect(
+                background, YELLOW, pygame.Rect(x, y, starsize, starsize))
+        font = pygame.font.SysFont("notosanscjkkr", size.font_s, bold=pygame.font.Font.bold, )
+        title, titleRect = load_image('title.png')
+        title = pygame.transform.scale(title, (round(title.get_width()*size.ratio), round(title.get_height()*size.ratio)))
+        titleRect = pygame.Rect(0, 0, title.get_width(), title.get_height())
+        titleRect.midtop = screen.get_rect().inflate(0, -size.middletoppos).midtop        
+        return scr_size, screen, background, backgroundLoc
+
+    def background_update(screen, background, backgroundLoc) :
+        screen.blit(
+            background, (0, 0), area=pygame.Rect(
+                0, backgroundLoc, size.x_background, scr_size))
+        backgroundLoc -= (speed*0.5)
+        if backgroundLoc - speed <= speed:
+            backgroundLoc = size.backgroundLoc
+
+        return screen, background, backgroundLoc
+
     # Initialize everything
     pygame.mixer.pre_init(11025, -16, 2, 512)
     pygame.init()
-    screen = pygame.display.set_mode((500, 500), pygame.RESIZABLE)
+    screen = pygame.display.set_mode((size.x_background, scr_size), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
     pygame.display.set_caption('Shooting Game')
     pygame.mouse.set_visible(0)
     language_check = language.get_language()  ######### False면 영어, True면 한국어
     select_mode = mode.get_mode() ###1: easy, 2: normal, 3: hard ### default : normal
-
-# Create the background which will scroll and loop over a set of different
-# size stars
-    background = pygame.Surface((screen.get_width(), screen.get_height()*4))
+    
+    background = pygame.Surface((size.x_background, size.background))
     background = background.convert()
     background.fill(BLACK)
-    backgroundLoc = 1500
+    backgroundLoc = size.backgroundLoc
     finalStars = deque()
-    for y in range(0, 1500, 30):
-        size = random.randint(2, 5)
-        x = random.randint(0, 500 - size)
-        if y <= 500:
-            finalStars.appendleft((x, y + 1500, size))
+    for y in range(0, size.backgroundLoc, size.star_seq):
+        starsize = random.randint(size.star_s, size.star_l)
+        x = random.randint(0, size.x_background - starsize)
+        if y <= scr_size:
+            finalStars.appendleft((x, y + size.backgroundLoc, starsize))
         pygame.draw.rect(
-            background, (255, 255, 0), pygame.Rect(x, y, size, size))
+            background, YELLOW, pygame.Rect(x, y, starsize, starsize))
     while finalStars:
-        x, y, size = finalStars.pop()
+        x, y, starsize = finalStars.pop()
         pygame.draw.rect(
-            background, (255, 255, 0), pygame.Rect(x, y, size, size))
-
-# Display the background
-    screen.blit(background, (0, 0))
-    pygame.display.flip()
+            background, YELLOW, pygame.Rect(x, y, starsize, starsize))
+    
+   
+    # Display the background
+        screen.blit(background, (0, 0))
+        pygame.display.flip()
 
 #################### Prepare game objects ###########################
     speed = 1.5
@@ -111,8 +198,9 @@ def main():
     clock = pygame.time.Clock()
     ship = Ship()
     initialAlienTypes = (Siney, Spikey)
+    currentAlienTypes = [Siney, Spikey]
     powerupTypes = (BombPowerup, ShieldPowerup, HalfPowerup)
-    time = 0
+    M_time = 0
     Missile_on = False
     Missile_gap = 12
     Mode_Dict = {1:["Easy","쉬움"], 2:["Normal","보통"], 3:["Hard", "어려움"]}
@@ -172,7 +260,7 @@ def main():
                       topright=screen.get_rect().inflate(-50, -50).topright)]
 
     title, titleRect = load_image('title.png')
-    titleRect.midtop = screen.get_rect().inflate(0, -150).midtop
+    titleRect.midtop = screen.get_rect().inflate(0, -size.x_background*0.35).midtop
     waveclear, waveclearRect = load_image('waveclear450.png')  #####wave넘어가는이미지 불러오기######################
     waveclearRect.midtop = screen.get_rect().inflate(0, 0).midtop   ####wave넘어가는이미지 위치설정#########################
     
@@ -261,21 +349,20 @@ def main():
     if music and pygame.mixer:
         pygame.mixer.music.play(loops=-1)
 
+    
     ################################# 메뉴 화면 #########################################
     while inMenu:
+        scr_x, scr_y = pygame.display.get_surface().get_size()
+        if size.x_background != scr_x or scr_size != scr_y :
+             return min(scr_x, scr_y)    # 메뉴화면에서만 창 사이즈 크기 확인하고, 변경되면 main 재시작
         clock.tick(clockTime)
 
-        screen.blit(
-            background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
-        backgroundLoc -= speed
-        if backgroundLoc - speed <= speed:
-            backgroundLoc = 1500
+        screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
 
         for event in pygame.event.get():
-
             if (event.type == pygame.QUIT):
-                return
+                pygame.quit()
+                sys.exit()
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_RETURN and not showChange_ship):
                 if showHiScores:
@@ -331,7 +418,8 @@ def main():
                     mode.change_mode()
                     select_mode = mode.get_mode()
                 elif selection == 6:
-                    return
+                    pygame.quit()
+                    sys.exit()
                 elif selection == 7:                                     #################################
                     language.change_language()
                     language_check = language.get_language()
@@ -352,7 +440,17 @@ def main():
             elif (event.type == pygame.QUIT ##menu 화면에서도 esc누르면 꺼지게
                 or event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
-                return
+                pygame.quit()
+                sys.exit()
+            elif (event.type == pygame.VIDEORESIZE) :
+                width = event.w
+                height = event.h
+                if width < size.min_size or height < size.min_size:  # 화면의 최소 크기
+                    height = size.min_size
+                if width/height != 1 : ## 1::1 비율 유지
+                    width = max(width, height)
+                    height = max(width, height)
+                resizing.change_size(height)
 
      ####기체이미지 변경 창########
             elif (event.type == pygame.KEYDOWN
@@ -529,8 +627,9 @@ def main():
     #                         메인 게임                           #
     #############################################################
     while ship.alive:
+        scr_x , scr_y = pygame.display.get_surface().get_size()
         clock.tick(clockTime)
-        time += 1
+        M_time += 1
 
         #######아이템 드롭#############
         if aliensLeftThisWave >= 1 : 
@@ -562,7 +661,7 @@ def main():
                 ship.vert -= direction[event.key][1] * speed
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_SPACE):
-                time = 0
+                M_time = 0
                 Missile_on = True
             elif (event.type == pygame.KEYUP
                   and event.key == pygame.K_SPACE):
@@ -575,6 +674,27 @@ def main():
                     newBomb.add(bombs, alldrawings)
                     if soundFX:
                         bomb_sound.play()
+            elif (event.type == pygame.VIDEORESIZE):
+                width = event.w
+                height = event.h
+                if width < size.min_size or height < size.min_size:  # 화면의 최소 크기
+                    height = size.min_size
+                
+                prev_scr_size = scr_size
+                scr_size, screen, background, backgroundLoc = resize(scr_x, scr_y)
+                Alien.pool = pygame.sprite.Group([alien() for alien in currentAlienTypes for _ in range(len(currentAlienTypes)*5)])
+                shipx, shipy = ship.rect[0] * scr_size / prev_scr_size, ship.rect[1] * scr_size / prev_scr_size
+                shipspeed = ship.speed
+                for i in allsprites.sprites() :
+                    i.rect = pygame.Rect(0, 0, i.image.get_width(), i.image.get_height())
+                    i.screen = pygame.display.get_surface()
+                    i.area = ship.screen.get_rect()
+
+                ship.speed = round(shipspeed * scr_size / prev_scr_size)
+                ship.rect[0], ship.rect[1] = shipx, shipy
+                ship.original = ship.image
+                ship.radius = max(ship.rect.width, ship.rect.height)
+
             elif (event.type == pygame.KEYDOWN
                     and event.key == pygame.K_p): ####### 일시정지 ######
                 ship.horiz = direction[None][0] * speed
@@ -585,17 +705,12 @@ def main():
 
                 while pauseMenu:
                     clock.tick(clockTime)
-
-                    screen.blit(
-                        background, (0, 0), area=pygame.Rect(
-                            0, backgroundLoc, 500, 500))
-                    backgroundLoc -= speed
-                    if backgroundLoc - speed <= speed:
-                        backgroundLoc = 1500
+                    screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
 
                     for event in pygame.event.get():
                         if (event.type == pygame.QUIT):
-                            return
+                            pygame.quit()
+                            sys.exit()
                         elif (event.type == pygame.KEYDOWN
                               and event.key == pygame.K_p):
                             pauseMenu = False
@@ -620,7 +735,8 @@ def main():
                                     pygame.mixer.music.stop()
                                 Database.setSound(int(music), music=True)
                             elif selection == 5:
-                                return
+                                pygame.quit()
+                                sys.exit()
                             elif selection == 6:
                                 language.change_language()
                                 language_check = language.get_language()
@@ -637,8 +753,9 @@ def main():
                         elif (event.type == pygame.QUIT  ##menu 화면에서도 esc누르면 꺼지게
                               or event.type == pygame.KEYDOWN
                               and event.key == pygame.K_ESCAPE):
-                            return
-
+                            pygame.quit()
+                            sys.exit()
+                        
                     selectPos = selectText.get_rect(topright=menuDict[selection].topleft)
 
                     if not language_check:  #################################################
@@ -701,7 +818,7 @@ def main():
                         screen.blit(txt, pos)
                     pygame.display.flip()
 
-        if Missile_on == True and time%Missile_gap == 0:
+        if Missile_on == True and M_time%Missile_gap == 0:
             Missile.position(ship.rect.midtop)
             missilesFired += 1
             if soundFX:
@@ -780,9 +897,12 @@ def main():
                         aliensLeftThisWave = 0
                     else  :
                         half_of_alien = round(aliensLeftThisWave/2)
-                        aliensLeftThisWave -= (num_of_alien+half_of_alien)
-                        score += (num_of_alien+half_of_alien)
-                        
+                        aliensLeftThisWave -= (half_of_alien)
+                        score += (half_of_alien)
+                        if aliensLeftThisWave<0 :
+                            aliensLeftThisWave = 0
+                    curTime = alienPeriod
+
                 powerup.kill()
             elif powerup.rect.top > powerup.area.bottom:
                 powerup.kill()
@@ -793,6 +913,7 @@ def main():
                 coin.kill()
             elif coin.rect.top > coin.area.bottom:
                 coin.kill()
+
       # Update Aliens
         if curTime <= 0 and aliensLeftThisWave > 0:
             Alien.position()
@@ -872,22 +993,20 @@ def main():
                     aliensLeftThisWave = Alien.numOffScreen = aliensThisWave
                 if wave == 1:
                     Alien.pool.add([Fasty() for _ in range(5)])
+                    currentAlienTypes.append(Fasty)
                 if wave == 2:
                     Alien.pool.add([Roundy() for _ in range(5)])
+                    currentAlienTypes.append(Roundy)
                 if wave == 3:
                     Alien.pool.add([Crawly() for _ in range(5)])
+                    currentAlienTypes.append(Crawly)
                 wave += 1
                 betweenWaveCount = betweenWaveTime
 
         textOverlays = zip(text, textposition)
 
     ################# Update and draw all sprites and text
-        screen.blit(
-            background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
-        backgroundLoc -= speed
-        if backgroundLoc - speed <= speed:
-            backgroundLoc = 1500
+        screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
         allsprites.update()
         allsprites.draw(screen)
         alldrawings.update()
@@ -910,16 +1029,19 @@ def main():
 
     # Event Handling
         CoinData.setCoins(coin_Have) ##정상적으로 게임을 끝마쳤을때만 코인개수 저장
+        
         for event in pygame.event.get():
             if (event.type == pygame.QUIT
                 or not isHiScore
                 and event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
-                return False
+                pygame.quit()
+                sys.exit()
+                #return False
             elif (event.type == pygame.KEYDOWN
                   and event.key == pygame.K_RETURN
                   and not isHiScore):
-                return True
+                return scr_size
             elif (event.type == pygame.KEYDOWN
                   and event.key in Keyboard.keys.keys()
                   and len(nameBuffer) < 8):
@@ -934,7 +1056,7 @@ def main():
                   and event.key == pygame.K_RETURN
                   and len(name) > 0):
                 Database.setScore(hiScores, (name, score, accuracy))
-                return True
+                return scr_size
 
         if isHiScore:
             if not language_check:                                     #################################
@@ -972,12 +1094,7 @@ def main():
                               [gameOverPos, scorePos])
 
     ############################### Update and draw all sprites ############################################
-        screen.blit(
-            background, (0, 0), area=pygame.Rect(
-                0, backgroundLoc, 500, 500))
-        backgroundLoc -= speed
-        if backgroundLoc - speed <= 0:
-            backgroundLoc = 1500
+        screen, background, backgroundLoc = background_update(screen, background, backgroundLoc)
         allsprites.update()
         allsprites.draw(screen)
         alldrawings.update()
@@ -987,5 +1104,14 @@ def main():
 
 
 if __name__ == '__main__':
-    while(main()):
+    while(True):
+
+        if resizing.get_size() == 0 :
+            pygame.quit()
+            sys.exit()
+        
+        sprites.get_size()
+        time.sleep(0.1) # 과도한 리사이즈(초당 60번)를 하지 않도록 함
+        s_size = main(resizing.get_size())
+        resizing.change_size(s_size)
         pass

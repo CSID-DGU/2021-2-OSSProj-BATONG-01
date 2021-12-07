@@ -1,14 +1,19 @@
 import pymysql
+import sqlite3
+import os
 
+main_dir = os.path.split(os.path.abspath(__file__))[0]
+data_dir = os.path.join(main_dir, 'data')
 
 
 class Database(object):
+    path = os.path.join(data_dir, 'hiScores.db')
     numScores = 15
 
     @staticmethod
     def getSound(music=False): # 사운드를 데이터베이스에서 불러오는 함수
-        conn = pymysql.connect(host='database-batong.cuwmiry5hdel.ap-northeast-2.rds.amazonaws.com', user='admin',
-                               password='batong1234', db='hiScores', charset='utf8')
+        conn = sqlite3.connect(Database.path)
+
         c = conn.cursor()
         if music:
             c.execute("CREATE TABLE if not exists music (setting integer)")
@@ -22,8 +27,8 @@ class Database(object):
 
     @staticmethod
     def setSound(setting, music=False): # 사운드를 설정하는 함수
-        conn = pymysql.connect(host='database-batong.cuwmiry5hdel.ap-northeast-2.rds.amazonaws.com', user='admin',
-                               password='batong1234', db='hiScores', charset='utf8')
+        conn = sqlite3.connect(Database.path)
+
         c = conn.cursor()
         if music:
             c.execute("DELETE FROM music")

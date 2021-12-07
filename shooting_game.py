@@ -651,7 +651,8 @@ def main(scr):
             if (event.type == pygame.QUIT
                 or event.type == pygame.KEYDOWN
                     and event.key == pygame.K_ESCAPE):
-                return
+                pygame.quit()
+                sys.exit()
             elif (event.type == pygame.KEYDOWN
                   and event.key in direction.keys()):
                 ship.horiz += direction[event.key][0] * speed
